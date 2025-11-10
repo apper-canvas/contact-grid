@@ -13,7 +13,9 @@ const ContactList = ({
   selectedContact, 
   onContactSelect, 
   onAddContact,
-  refreshTrigger
+  refreshTrigger,
+  onEdit,
+  onBulkDelete
 }) => {
 const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -294,10 +296,9 @@ key={contact.id}
             </table>
 </div>
           </div>
-        )}
+)}
       </div>
     </div>
-</div>
   );
 };
 ContactList.defaultProps = {
