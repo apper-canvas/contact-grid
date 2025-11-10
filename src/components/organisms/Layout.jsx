@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useAuth } from "@/layouts/Root";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
 
-const Layout = () => {
-// App-level state management
+export default function Layout() {
+  const { user } = useSelector((state) => state.user);
+  const { logout } = useAuth();
+  
+  // Global state for contact management
   const [selectedContact, setSelectedContact] = useState(null);
   const [showContactForm, setShowContactForm] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
@@ -42,14 +47,18 @@ const Layout = () => {
     setLoading(true);
     
     try {
-      if (editingContact) {
+if (editingContact) {
         const updatedContact = await updateContact(editingContact.id, formData);
-        setSelectedContact(updatedContact);
-        toast.success("Contact updated successfully!");
+        if (updatedContact) {
+          setSelectedContact(updatedContact);
+          toast.success("Contact updated successfully!");
+        }
       } else {
         const newContact = await createContact(formData);
-        setSelectedContact(newContact);
-        toast.success("Contact added successfully!");
+        if (newContact) {
+          setSelectedContact(newContact);
+          toast.success("Contact added successfully!");
+        }
       }
       
       setShowContactForm(false);
@@ -73,10 +82,13 @@ const Layout = () => {
     setLoading(true);
     
     try {
-      await deleteContact(contactToDelete.id);
+const result = await deleteContact(contactToDelete.id);
       
-      if (selectedContact?.id === contactToDelete.id) {
-        setSelectedContact(null);
+      if (result.success) {
+        if (selectedContact?.id === contactToDelete.id) {
+          setSelectedContact(null);
+        }
+        toast.success("Contact deleted successfully!");
       }
       
       toast.success("Contact deleted successfully!");
@@ -187,7 +199,7 @@ return (
               </div>
 </div>
             
-            {/* User Menu */}
+{/* User Menu */}
             <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-6">
               <button
                 onClick={handleAddContact}
@@ -201,8 +213,18 @@ return (
                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                   <ApperIcon name="User" size={16} className="text-white" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Profile</span>
+                <span className="text-sm font-medium text-gray-700">
+                  {user?.firstName || 'User'}
+                </span>
               </div>
+              
+              <button
+                onClick={logout}
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              >
+                <ApperIcon name="LogOut" size={18} />
+                <span>Logout</span>
+              </button>
             </div>
           </div>
 </header>
@@ -215,5 +237,3 @@ return (
     </div>
   );
 };
-
-export default Layout;

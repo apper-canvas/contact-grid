@@ -1,10 +1,11 @@
 import React from "react";
-import { cn } from "@/utils/cn";
 import { getTagColor } from "@/services/api/tagService";
+import { cn } from "@/utils/cn";
 
-const Tag = ({ label, className, removable = false, onRemove, ...props }) => {
-  const tagColor = getTagColor(label);
-  
+const Tag = (props) => {
+  const {className, label, text, size = "md", variant = "default", removable, onRemove, ...props: restProps} = props;
+
+  const tagColor = getTagColor(label || text);
   const style = {
     backgroundColor: `${tagColor}15`,
     color: tagColor,
@@ -17,8 +18,8 @@ const Tag = ({ label, className, removable = false, onRemove, ...props }) => {
         "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border tag-chip transition-all duration-200 hover:shadow-sm",
         className
       )}
-      style={style}
-      {...props}
+style={style}
+      {...restProps}
     >
       {label}
       {removable && onRemove && (

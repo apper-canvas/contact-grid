@@ -27,9 +27,14 @@ const ContactList = ({
     setError("");
     
     try {
-      const data = await getAllContacts();
-      setContacts(data);
-      setFilteredContacts(data);
+const data = await getAllContacts();
+      if (data && Array.isArray(data)) {
+        setContacts(data);
+        setFilteredContacts(data);
+      } else {
+        setContacts([]);
+        setFilteredContacts([]);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,8 +54,12 @@ const ContactList = ({
       }
 
       try {
-        const results = await searchContacts(searchQuery);
-        setFilteredContacts(results);
+const results = await searchContacts(searchQuery);
+        if (results && Array.isArray(results)) {
+          setFilteredContacts(results);
+        } else {
+          setFilteredContacts([]);
+        }
       } catch (err) {
         console.error("Search failed:", err);
         setFilteredContacts([]);
@@ -61,20 +70,22 @@ const ContactList = ({
   }, [searchQuery, contacts]);
 
   useEffect(() => {
-    const sortedContacts = [...filteredContacts].sort((a, b) => {
-      switch (sortBy) {
-        case "name":
-          return a.name.localeCompare(b.name);
-        case "company":
-          return a.company.localeCompare(b.company);
-        case "created":
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        case "updated":
-        default:
-          return new Date(b.updatedAt) - new Date(a.updatedAt);
-      }
-    });
-    setFilteredContacts(sortedContacts);
+if (filteredContacts && filteredContacts.length > 0) {
+      const sortedContacts = [...filteredContacts].sort((a, b) => {
+        switch (sortBy) {
+          case "name":
+            return (a.name || '').localeCompare(b.name || '');
+          case "company":
+            return (a.company || '').localeCompare(b.company || '');
+          case "created":
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+          case "updated":
+          default:
+            return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+        }
+      });
+      setFilteredContacts(sortedContacts);
+    }
   }, [sortBy, filteredContacts.length]);
 
   if (loading) {
@@ -129,7 +140,7 @@ className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden 
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                     {filteredContacts.map(contact => <tr
-                        key={contact.id}
+key={contact.id}
                         onClick={() => onContactSelect(contact)}
                         className={`cursor-pointer transition-colors hover:bg-gray-50 ${selectedContact?.id === contact.id ? "bg-blue-50 border-l-4 border-l-blue-500" : ""}`}>
                         <td className="py-3 px-4 min-w-[200px]">
@@ -139,7 +150,7 @@ className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden 
                                     <ApperIcon name="User" size={16} className="text-blue-600" />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium text-gray-900 truncate">{contact.name}</p>
+                                    <p className="text-sm font-medium text-gray-900 truncate">{contact.name || 'No Name'}</p>
                                     <p className="text-xs text-gray-500 truncate">{contact.position || "No position"}</p>
                                 </div>
                             </div>
@@ -163,8 +174,8 @@ className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden 
                         </td>
                         <td className="py-3 px-4 min-w-[160px]">
                             <div className="flex flex-wrap gap-1 max-w-[150px]">
-                                {contact.tags && contact.tags.length > 0 ? contact.tags.slice(0, 3).map((tag, index) => <Tag key={index} text={tag} size="xs" />) : <span className="text-sm text-gray-400">-</span>}
-                                {contact.tags && contact.tags.length > 3 && <span className="text-xs text-gray-500 ml-1">+{contact.tags.length - 3}</span>}
+                                {contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 ? contact.tags.slice(0, 3).map((tag, index) => <Tag key={index} text={tag} size="xs" />) : <span className="text-sm text-gray-400">-</span>}
+                                {contact.tags && Array.isArray(contact.tags) && contact.tags.length > 3 && <span className="text-xs text-gray-500 ml-1">+{contact.tags.length - 3}</span>}
                             </div>
                         </td>
 </tr>)}

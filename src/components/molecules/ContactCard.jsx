@@ -31,10 +31,10 @@ return (
 <div className="flex items-start justify-between mb-3 gap-2">
         <div className="min-w-0 flex-1">
 <h3 className="font-semibold text-gray-900 text-base lg:text-lg mb-1 truncate">
-            {contact.name}
+{contact.name || 'No Name'}
           </h3>
           <p className="text-secondary text-sm lg:text-base truncate">
-            {contact.position} at {contact.company}
+            {contact.position || 'No Position'} at {contact.company || 'No Company'}
           </p>
         </div>
 <div className="text-xs text-gray-400 flex-shrink-0">
@@ -43,9 +43,9 @@ return (
       </div>
 
 <div className="space-y-2 mb-4">
-        <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
+<div className="flex items-center text-sm text-gray-600 min-h-[20px]">
           <ApperIcon name="Mail" size={14} className="mr-2 text-gray-400 flex-shrink-0" />
-          <span className="truncate">{contact.email}</span>
+          <span className="truncate">{contact.email || 'No Email'}</span>
         </div>
 {contact.phone && (
 <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
@@ -56,7 +56,7 @@ return (
       </div>
 
       {/* Tags */}
-{contact.tags && contact.tags.length > 0 && (
+{contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 lg:gap-2 mb-3">
           {contact.tags.slice(0, 3).map((tag, index) => (
             <Tag key={index} label={tag} />

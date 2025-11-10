@@ -30,13 +30,12 @@ if (!contact) {
     );
   }
 
-  const contactFields = [
+const contactFields = [
     { label: 'Name', value: contact.name, icon: 'User' },
     { label: 'Email', value: contact.email, icon: 'Mail' },
     { label: 'Phone', value: contact.phone, icon: 'Phone' },
     { label: 'Company', value: contact.company, icon: 'Building' },
     { label: 'Position', value: contact.position, icon: 'Briefcase' },
-    { label: 'Location', value: contact.location, icon: 'MapPin' },
     { label: 'Notes', value: contact.notes, icon: 'FileText' },
     { label: 'Created', value: formatDate(contact.createdAt), icon: 'Calendar' },
     { label: 'Updated', value: formatDate(contact.updatedAt), icon: 'Clock' }
@@ -52,8 +51,8 @@ return (
               <ApperIcon name="User" size={20} className="text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">{contact.name}</h2>
-              <p className="text-sm text-gray-500">{contact.company} • {contact.position}</p>
+<h2 className="text-xl font-semibold text-gray-900">{contact.name || 'No Name'}</h2>
+              <p className="text-sm text-gray-500">{contact.company || 'No Company'} • {contact.position || 'No Position'}</p>
             </div>
 </div>
           <div className="flex items-center space-x-2 w-full lg:w-auto justify-end">
@@ -80,7 +79,7 @@ size="sm"
       </div>
 
       {/* Tags Section */}
-{contact.tags && contact.tags.length > 0 && (
+{contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 && (
         <div className="px-4 lg:px-6 py-3 bg-blue-50 border-b border-gray-200">
           <div className="flex items-center space-x-2">
             <ApperIcon name="Tag" size={16} className="text-gray-500" />

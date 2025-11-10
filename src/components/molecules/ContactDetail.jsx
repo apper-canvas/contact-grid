@@ -31,10 +31,10 @@ return (
         <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
           <div>
 <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">
-              {contact.name}
+{contact.name || 'No Name'}
             </h2>
             <p className="text-base lg:text-lg text-secondary">
-              {contact.position} at {contact.company}
+              {contact.position || 'No Position'} at {contact.company || 'No Company'}
             </p>
           </div>
 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full lg:w-auto">
@@ -71,10 +71,10 @@ size="sm"
             <div className="flex items-center space-x-2">
               <ApperIcon name="Mail" size={16} className="text-gray-400" />
               <a 
-                href={`mailto:${contact.email}`}
+href={`mailto:${contact.email || ''}`}
                 className="text-primary hover:text-accent transition-colors"
               >
-                {contact.email}
+                {contact.email || 'No Email'}
               </a>
             </div>
           </div>
@@ -86,8 +86,8 @@ size="sm"
               </h3>
               <div className="flex items-center space-x-2">
                 <ApperIcon name="Phone" size={16} className="text-gray-400" />
-                <a 
-                  href={`tel:${contact.phone}`}
+<a 
+                  href={`tel:${contact.phone || ''}`}
                   className="text-primary hover:text-accent transition-colors"
                 >
                   {contact.phone}
@@ -100,9 +100,9 @@ size="sm"
             <h3 className="text-sm font-medium text-gray-500 mb-2">
               Company
             </h3>
-            <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
               <ApperIcon name="Building" size={16} className="text-gray-400" />
-              <span className="text-gray-900">{contact.company}</span>
+              <span className="text-gray-900">{contact.company || 'No Company'}</span>
             </div>
           </div>
 
@@ -110,15 +110,15 @@ size="sm"
             <h3 className="text-sm font-medium text-gray-500 mb-2">
               Position
             </h3>
-            <div className="flex items-center space-x-2">
+<div className="flex items-center space-x-2">
               <ApperIcon name="Briefcase" size={16} className="text-gray-400" />
-              <span className="text-gray-900">{contact.position}</span>
+              <span className="text-gray-900">{contact.position || 'No Position'}</span>
             </div>
           </div>
         </div>
 
         {/* Tags */}
-{contact.tags && contact.tags.length > 0 && (
+{contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-3">Tags</h3>
             <div className="flex flex-wrap gap-2 lg:gap-3">

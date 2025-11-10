@@ -28,23 +28,27 @@ const ContactForm = ({
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
+setFormData({
         name: initialData.name || "",
         email: initialData.email || "",
         phone: initialData.phone || "",
         company: initialData.company || "",
         position: initialData.position || "",
         notes: initialData.notes || "",
-        tags: initialData.tags || []
+        tags: Array.isArray(initialData.tags) ? initialData.tags : []
       });
     }
   }, [initialData]);
 
   useEffect(() => {
     const loadTags = async () => {
-      try {
+try {
         const tags = await getAllTags();
-        setAvailableTags(tags);
+        if (tags && Array.isArray(tags)) {
+          setAvailableTags(tags);
+        } else {
+          setAvailableTags([]);
+        }
       } catch (error) {
         console.error("Failed to load tags:", error);
       }
@@ -116,9 +120,9 @@ const ContactForm = ({
     }
   };
 
-  const suggestedTags = availableTags.filter(tag => 
+const suggestedTags = availableTags.filter(tag => 
     !formData.tags.includes(tag.label) &&
-    tag.label.toLowerCase().includes(newTag.toLowerCase())
+    tag.label && tag.label.toLowerCase().includes(newTag.toLowerCase())
   );
 
 return (
