@@ -3,7 +3,7 @@ import { getTagColor } from "@/services/api/tagService";
 import { cn } from "@/utils/cn";
 
 const Tag = (props) => {
-  const {className, label, text, size = "md", variant = "default", removable, onRemove, ...props: restProps} = props;
+const {className, label, text, size = "md", variant = "default", removable, onRemove, ...restProps} = props;
 
   const tagColor = getTagColor(label || text);
   const style = {
