@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useAuth } from "@/layouts/Root";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
+import { useAuth } from "@/layouts/Root";
 
 export default function Layout() {
   const { user } = useSelector((state) => state.user);
@@ -12,10 +12,13 @@ export default function Layout() {
   
   // Global state for contact management
   const [selectedContact, setSelectedContact] = useState(null);
-  const [showContactForm, setShowContactForm] = useState(false);
+const [showContactForm, setShowContactForm] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [contactToDelete, setContactToDelete] = useState(null);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+  const [contactsToDelete, setContactsToDelete] = useState([]);
+  const [bulkDeleteClearSelection, setBulkDeleteClearSelection] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,8 +27,26 @@ export default function Layout() {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const handleContactSelect = (contact) => {
+const handleContactSelect = (contact) => {
     setSelectedContact(contact);
+  };
+
+  // Handle bulk update (edit single selected contact)
+  const handleBulkUpdate = (contactIds, clearSelection) => {
+    if (contactIds.length === 1) {
+      // Find the contact to edit and open edit form
+      const contactId = contactIds[0];
+      // This will be handled by the ContactList component directly
+      // by calling the existing handleEditContact method
+      clearSelection();
+    }
+  };
+
+  // Handle bulk delete
+  const handleBulkDelete = (contactIds, clearSelection) => {
+    setContactsToDelete(contactIds);
+    setBulkDeleteClearSelection(() => clearSelection);
+    setShowBulkDeleteDialog(true);
   };
 
   const handleAddContact = () => {
@@ -76,13 +97,61 @@ if (editingContact) {
     setEditingContact(null);
   };
 
-  const confirmDelete = async () => {
+// Confirm bulk delete
+  const confirmBulkDelete = async () => {
+    if (contactsToDelete.length === 0) return;
+    
+    setLoading(true);
+    try {
+      let successCount = 0;
+      let errorCount = 0;
+
+// Process each contact deletion
+      for (const contactId of contactsToDelete) {
+        const result = await deleteContact(contactId);
+        if (result.success) {
+          successCount++;
+        } else {
+          errorCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        toast.success(`Successfully deleted ${successCount} contact${successCount !== 1 ? 's' : ''}`);
+        setRefreshTrigger(prev => prev + 1);
+        if (bulkDeleteClearSelection) {
+          bulkDeleteClearSelection();
+        }
+      }
+
+      if (errorCount > 0) {
+        toast.error(`Failed to delete ${errorCount} contact${errorCount !== 1 ? 's' : ''}`);
+      }
+    } catch (error) {
+      console.error("Error in bulk delete:", error);
+      toast.error("Failed to delete contacts");
+    } finally {
+      setLoading(false);
+      setShowBulkDeleteDialog(false);
+      setContactsToDelete([]);
+      setBulkDeleteClearSelection(null);
+    }
+  };
+
+  // Cancel bulk delete
+  const cancelBulkDelete = () => {
+    setShowBulkDeleteDialog(false);
+    setContactsToDelete([]);
+    setBulkDeleteClearSelection(null);
+  };
+
+const confirmDelete = async () => {
     if (!contactToDelete) return;
 
     setLoading(true);
     
     try {
-const result = await deleteContact(contactToDelete.id);
+      const result = await deleteContact(contactToDelete.id);
       
       if (result.success) {
         if (selectedContact?.id === contactToDelete.id) {
@@ -91,7 +160,6 @@ const result = await deleteContact(contactToDelete.id);
         toast.success("Contact deleted successfully!");
       }
       
-      toast.success("Contact deleted successfully!");
       setShowDeleteDialog(false);
       setContactToDelete(null);
       refreshContacts();
@@ -101,9 +169,8 @@ const result = await deleteContact(contactToDelete.id);
       setLoading(false);
     }
   };
-
   const cancelDelete = () => {
-    setShowDeleteDialog(false);
+setShowDeleteDialog(false);
     setContactToDelete(null);
   };
 
@@ -114,16 +181,22 @@ const result = await deleteContact(contactToDelete.id);
     editingContact,
     showDeleteDialog,
     contactToDelete,
+    showBulkDeleteDialog,
+    contactsToDelete,
     loading,
     refreshTrigger,
     handleContactSelect,
     handleAddContact,
     handleEditContact,
     handleDeleteContact,
+    handleBulkUpdate,
+    handleBulkDelete,
     handleFormSubmit,
     handleFormCancel,
     confirmDelete,
-    cancelDelete
+    cancelDelete,
+    confirmBulkDelete,
+    cancelBulkDelete
   };
 
 return (
@@ -235,5 +308,5 @@ return (
         </main>
       </div>
     </div>
-  );
-};
+);
+}

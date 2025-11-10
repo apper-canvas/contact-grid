@@ -8,33 +8,40 @@ import ContactForm from "@/components/molecules/ContactForm";
 
 const ContactManagement = () => {
   // Get all state and handlers from outlet context
-  const {
+const {
     selectedContact,
     showContactForm,
     editingContact,
     showDeleteDialog,
     contactToDelete,
+    showBulkDeleteDialog,
+    contactsToDelete,
     loading,
     refreshTrigger,
     handleContactSelect,
     handleAddContact,
     handleEditContact,
     handleDeleteContact,
+    handleBulkUpdate,
+    handleBulkDelete,
     handleFormSubmit,
     handleFormCancel,
     confirmDelete,
-    cancelDelete
+    cancelDelete,
+    confirmBulkDelete,
+    cancelBulkDelete
   } = useOutletContext();
-
 return (
     <>
 <div className="h-full w-full">
         <div className="min-h-[calc(100vh-12rem)] lg:h-[calc(100vh-8rem)] w-full">
           {/* Full Width Contacts Table */}
-          <ContactList
+<ContactList
             selectedContact={selectedContact}
             onContactSelect={handleContactSelect}
             onAddContact={handleAddContact}
+            onEdit={handleEditContact}
+            onBulkDelete={handleBulkDelete}
             refreshTrigger={refreshTrigger}
           />
         </div>
@@ -57,7 +64,19 @@ return (
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showDeleteDialog}
-        onClose={cancelDelete}
+onClose={cancelDelete}
+      />
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showBulkDeleteDialog}
+        title="Delete Contacts"
+        message={`Are you sure you want to delete ${contactsToDelete.length} contact${contactsToDelete.length !== 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmBulkDelete}
+        onClose={cancelBulkDelete}
+        loading={loading}
         onConfirm={confirmDelete}
         title="Delete Contact"
         message={`Are you sure you want to delete ${contactToDelete?.name}? This action cannot be undone.`}
