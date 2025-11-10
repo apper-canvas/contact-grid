@@ -189,22 +189,23 @@ if (filteredContacts && filteredContacts.length > 0) {
                 className="text-gray-600 hover:text-gray-800"
               >
                 Clear
-              </Button>
+</Button>
             </div>
-</div>
           </div>
         )}
       </div>
 
       {/* Contact Table */}
-      <div
+<div
         className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden min-h-[400px] lg:h-[calc(100vh-200px)]">
-            <Empty
-                title={searchQuery ? "No contacts found" : "No contacts yet"}
-                message={searchQuery ? `No contacts match "${searchQuery}". Try adjusting your search terms.` : "Get started by adding your first contact to begin organizing your professional network."}
-                actionLabel="Add Your First Contact"
-                onAction={searchQuery ? undefined : onAddContact} />
-        </div> : <div className="overflow-x-auto overflow-y-auto h-full">
+        {filteredContacts.length === 0 ? (
+          <Empty
+            title={searchQuery ? "No contacts found" : "No contacts yet"}
+            message={searchQuery ? `No contacts match "${searchQuery}". Try adjusting your search terms.` : "Get started by adding your first contact to begin organizing your professional network."}
+            actionLabel="Add Your First Contact"
+            onAction={searchQuery ? undefined : onAddContact} />
+        ) : (
+          <div className="overflow-x-auto overflow-y-auto h-full">
 <div className="overflow-x-auto">
               <table className="w-full min-w-[800px]">
 <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
@@ -291,9 +292,10 @@ key={contact.id}
 </tr>)}
 </tbody>
             </table>
-        </div>
-        </div>
-        }
+</div>
+          </div>
+        )}
+      </div>
     </div>
 </div>
   );
