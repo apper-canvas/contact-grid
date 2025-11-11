@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
@@ -240,20 +240,20 @@ return (
 {/* Navigation Menu */}
           <nav className="flex-1 p-4">
             <div className="space-y-2">
-              <a
-                href="/"
+<Link
+                to="/"
                 className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ApperIcon name="Users" size={20} />
                 <span className="font-medium">Contacts</span>
-              </a>
-              <a
-                href="/deals"
+              </Link>
+              <Link
+                to="/deals"
                 className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ApperIcon name="BarChart3" size={20} />
                 <span className="font-medium">Deal Pipeline</span>
-              </a>
+              </Link>
             </div>
           </nav>
           </div>
