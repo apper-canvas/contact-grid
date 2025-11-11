@@ -7,7 +7,6 @@ const Root = lazy(() => import('@/layouts/Root'));
 const Layout = lazy(() => import('@/components/organisms/Layout'));
 const ContactManagement = lazy(() => import('@/components/pages/ContactManagement'));
 const DealPipeline = lazy(() => import('@/components/pages/DealPipeline'));
-const CompanyProfile = lazy(() => import('@/components/pages/CompanyProfile'));
 const NotFound = lazy(() => import('@/components/pages/NotFound'));
 const Login = lazy(() => import('@/components/pages/Login'));
 const Signup = lazy(() => import('@/components/pages/Signup'));
@@ -61,19 +60,9 @@ createRoute({
     path: "contacts",
     element: <ContactManagement />
   }),
-createRoute({
-    path: "deals",
-    element: <DealPipeline />,
-    index: false,
-  }),
   createRoute({
-    path: "companies",
-    element: <CompanyProfile />,
-    index: false,
-  }),
-createRoute({
-    path: "companies/:id",
-    element: <CompanyProfile />
+    path: "deals",
+    element: <DealPipeline />
   }),
   createRoute({
     path: "*",

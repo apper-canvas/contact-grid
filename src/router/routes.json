@@ -1,10 +1,11 @@
+[
 {
   "/": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "User must be authenticated to access home",
+            "label": "User must be authenticated to access contacts",
             "rule": "authenticated"
           }
         ]
@@ -25,45 +26,6 @@
       "redirectOnDeny": "/login"
     }
   },
-  "/deals": {
-    "allow": {
-      "when": {
-        "conditions": [
-          {
-            "label": "User must be authenticated to view deals",
-            "rule": "authenticated"
-          }
-        ]
-      },
-      "redirectOnDeny": "/login"
-    }
-  },
-  "/companies": {
-    "allow": {
-      "when": {
-        "conditions": [
-          {
-            "label": "User must be authenticated to view companies",
-            "rule": "authenticated"
-          }
-        ]
-      },
-      "redirectOnDeny": "/login"
-    }
-  },
-  "/companies/:id": {
-    "allow": {
-      "when": {
-        "conditions": [
-          {
-            "label": "User must be authenticated to view company details",
-            "rule": "authenticated"
-          }
-        ]
-      },
-      "redirectOnDeny": "/login"
-    }
-  },
   "/login": {
     "allow": {
       "when": {
@@ -71,14 +33,16 @@
           {
             "label": "Login page is public",
             "rule": "public"
-          }
-        ]
-      }
-    },
-    "excludeRedirectQuery": true
+          },
+"requiresAuth",": true",
+    "access",":", "public"]
   },
-  "/signup": {
-    "allow": {
+  "/deals": {
+    "component": "DealPipeline",
+    "requiresAuth": true,
+    "access": "public"
+  }
+},
       "when": {
         "conditions": [
           {
@@ -87,10 +51,9 @@
           }
         ]
       }
-    },
-    "excludeRedirectQuery": true
+    }
   },
-  "/callback": {
+  "/callback",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -100,10 +63,9 @@
           }
         ]
       }
-    },
-    "excludeRedirectQuery": true
+    }
   },
-  "/error": {
+  "/error",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -113,10 +75,9 @@
           }
         ]
       }
-    },
-    "excludeRedirectQuery": true
+    }
   },
-  "/reset-password/:appId/:fields": {
+  "/reset-password/:appId/:fields",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -126,10 +87,9 @@
           }
         ]
       }
-    },
-    "excludeRedirectQuery": true
+    }
   },
-  "/prompt-password/:appId/:emailAddress/:provider": {
+  "/prompt-password/:appId/:emailAddress/:provider",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -139,7 +99,7 @@
           }
         ]
       }
-    },
-    "excludeRedirectQuery": true
+    }
   }
-}
+
+]

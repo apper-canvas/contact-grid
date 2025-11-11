@@ -66,12 +66,13 @@ const handleAddContact = () => {
   const handleDeleteContact = (contact) => {
     setContactToDelete(contact);
     setShowDeleteDialog(true);
-};
+  };
 
   const handleFormSubmit = async (formData) => {
     setLoading(true);
+    
     try {
-      if (editingContact) {
+if (editingContact) {
         const updatedContact = await updateContact(editingContact.id, formData);
         if (updatedContact) {
           setSelectedContact(updatedContact);
@@ -254,18 +255,6 @@ setShowDeleteDialog(false);
                 >
                   <ApperIcon name="Users" size={20} />
                   <span className="font-medium">Contacts</span>
-                </Link>
-<Link
-                  to="/companies"
-                  className={cn(
-                    "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                    location.pathname === "/companies" 
-                      ? "bg-blue-50 text-blue-600" 
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                >
-                  <ApperIcon name="Building" size={20} />
-                  <span className="font-medium">Companies</span>
                 </Link>
                 <Link
                   to="/deals"
