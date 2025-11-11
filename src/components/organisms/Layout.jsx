@@ -290,13 +290,23 @@ setShowDeleteDialog(false);
             
             {/* User Menu */}
             <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-6">
-              <button
-                onClick={handleAddContact}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
-              >
-                <ApperIcon name="Plus" size={18} />
-                <span>Add Contact</span>
-              </button>
+{location.pathname === '/deals' ? (
+                <button
+                  onClick={handleAddContact}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  <ApperIcon name="BarChart3" size={18} />
+                  <span>Add Deal</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleAddContact}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  <ApperIcon name="Plus" size={18} />
+                  <span>Add Contact</span>
+                </button>
+              )}
               
               <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">
                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
