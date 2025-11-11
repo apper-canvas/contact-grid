@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { cn } from "@/utils/cn";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
+import { useAuth } from "@/layouts/Root";
+import { cn } from "@/utils/cn";
 
-export default function Layout() {
+const Layout = () => {
+  const location = useLocation();
   const { user } = useSelector((state) => state.user);
   const { logout } = useAuth();
-  
-  // Global state for contact management
-  const [selectedContact, setSelectedContact] = useState(null);
-const [showContactForm, setShowContactForm] = useState(false);
+const [selectedContact, setSelectedContact] = useState(null);
+  const [showContactForm, setShowContactForm] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [contactToDelete, setContactToDelete] = useState(null);
@@ -238,18 +237,28 @@ return (
           </div>
 
 {/* Navigation Menu */}
-          <nav className="flex-1 p-4">
+<nav className="flex-1 p-4">
             <div className="space-y-2">
-<Link
+              <Link
                 to="/"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className={cn(
+                  "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+                  location.pathname === "/" 
+                    ? "bg-blue-50 text-blue-600" 
+                    : "text-gray-700 hover:bg-gray-100"
+                )}
               >
                 <ApperIcon name="Users" size={20} />
                 <span className="font-medium">Contacts</span>
               </Link>
               <Link
                 to="/deals"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className={cn(
+                  "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+                  location.pathname === "/deals" 
+                    ? "bg-blue-50 text-blue-600" 
+                    : "text-gray-700 hover:bg-gray-100"
+                )}
               >
                 <ApperIcon name="BarChart3" size={20} />
                 <span className="font-medium">Deal Pipeline</span>
