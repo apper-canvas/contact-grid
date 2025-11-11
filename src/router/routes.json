@@ -1,3 +1,4 @@
+[
 {
   "/": {
     "allow": {
@@ -32,13 +33,16 @@
           {
             "label": "Login page is public",
             "rule": "public"
-          }
-        ]
-      }
-    }
+          },
+"requiresAuth",": true",
+    "access",":", "public"]
   },
-  "/signup": {
-    "allow": {
+  "/deals": {
+    "component": "DealPipeline",
+    "requiresAuth": true,
+    "access": "public"
+  }
+},
       "when": {
         "conditions": [
           {
@@ -49,7 +53,7 @@
       }
     }
   },
-  "/callback": {
+  "/callback",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -61,7 +65,7 @@
       }
     }
   },
-  "/error": {
+  "/error",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -73,7 +77,7 @@
       }
     }
   },
-  "/reset-password/:appId/:fields": {
+  "/reset-password/:appId/:fields",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -85,7 +89,7 @@
       }
     }
   },
-  "/prompt-password/:appId/:emailAddress/:provider": {
+  "/prompt-password/:appId/:emailAddress/:provider",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -97,4 +101,5 @@
       }
     }
   }
-}
+
+]

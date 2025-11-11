@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { cn } from "@/utils/cn";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import ApperIcon from "@/components/ApperIcon";
 import { useAuth } from "@/layouts/Root";
+import ApperIcon from "@/components/ApperIcon";
 
 export default function Layout() {
   const { user } = useSelector((state) => state.user);
@@ -40,12 +41,11 @@ const handleContactSelect = (contact) => {
       // by calling the existing handleEditContact method
       clearSelection();
     }
-  };
+};
 
-  // Handle bulk delete
   const handleBulkDelete = (contactIds, clearSelection) => {
     setContactsToDelete(contactIds);
-    setBulkDeleteClearSelection(() => clearSelection);
+    setBulkDeleteClearSelection(clearSelection);
     setShowBulkDeleteDialog(true);
   };
 
