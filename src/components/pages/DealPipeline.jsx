@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { getAllDeals, updateDeal, deleteDeal, createDeal } from '@/services/api/dealService';
-import { getAllStages } from '@/services/api/dealStageService';
-import DealStage from '@/components/molecules/DealStage';
-import DealForm from '@/components/molecules/DealForm';
-import Loading from '@/components/ui/Loading';
-import ErrorView from '@/components/ui/ErrorView';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import Modal from '@/components/atoms/Modal';
-import ConfirmDialog from '@/components/molecules/ConfirmDialog';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { createDeal, deleteDeal, getAllDeals, updateDeal } from "@/services/api/dealService";
+import { getAllStages } from "@/services/api/dealStageService";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import Modal from "@/components/atoms/Modal";
+import ConfirmDialog from "@/components/molecules/ConfirmDialog";
+import DealStage from "@/components/molecules/DealStage";
+import DealForm from "@/components/molecules/DealForm";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
 function DealPipeline() {
 const [deals, setDeals] = useState([]);
   const [stages, setStages] = useState([]);
@@ -17,10 +17,11 @@ const [deals, setDeals] = useState([]);
   const [error, setError] = useState(null);
 const [selectedDeal, setSelectedDeal] = useState(null);
   const [isEditingDeal, setIsEditingDeal] = useState(false);
+  const [isCreatingDeal, setIsCreatingDeal] = useState(false);
+  const [filteredStages, setFilteredStages] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [dealToDelete, setDealToDelete] = useState(null);
-  const [isAddingDeal, setIsAddingDeal] = useState(false);
-  const [isCreatingDeal, setIsCreatingDeal] = useState(false);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -100,30 +101,7 @@ const handleEditDeal = (deal) => {
   const cancelEditDeal = () => {
     setIsEditingDeal(false);
     setSelectedDeal(null);
-  };
-
-  const handleAddDeal = () => {
-    setIsAddingDeal(true);
-  };
-
-  const handleCreateDeal = async (dealData) => {
-    setIsCreatingDeal(true);
-    try {
-      await createDeal(dealData);
-      setIsAddingDeal(false);
-      await loadData();
-      toast.success('Deal created successfully!');
-    } catch (error) {
-      console.error('Failed to create deal:', error);
-      toast.error('Failed to create deal. Please try again.');
-    } finally {
-      setIsCreatingDeal(false);
-    }
-  };
-
-  const cancelAddDeal = () => {
-    setIsAddingDeal(false);
-  };
+};
 
   const handleDeleteDeal = (deal) => {
     setDealToDelete(deal);
@@ -194,13 +172,6 @@ const handleEditDeal = (deal) => {
             
 <div className="flex items-center space-x-3">
               <Button 
-                onClick={handleAddDeal}
-                size="sm"
-              >
-                <ApperIcon name="Plus" size={16} className="mr-2" />
-                Add Deal
-              </Button>
-              <Button 
                 onClick={loadData}
                 variant="outline"
                 size="sm"
@@ -231,18 +202,6 @@ const handleEditDeal = (deal) => {
         </div>
       </div>
 
-{/* Add Deal Modal */}
-      <Modal
-        isOpen={isAddingDeal}
-        onClose={cancelAddDeal}
-        title="Add New Deal"
-      >
-        <DealForm
-          onSubmit={handleCreateDeal}
-          onCancel={cancelAddDeal}
-          loading={isCreatingDeal}
-        />
-      </Modal>
 
       {/* Edit Deal Modal */}
       <Modal

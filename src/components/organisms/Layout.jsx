@@ -291,12 +291,12 @@ setShowDeleteDialog(false);
             {/* User Menu */}
             <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-6">
 {location.pathname === '/deals' ? (
-                <button
+<button
                   onClick={handleAddContact}
                   className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 >
-                  <ApperIcon name="BarChart3" size={18} />
-                  <span>Add Deal</span>
+                  <ApperIcon name="UserPlus" size={18} />
+                  <span>Add Contact</span>
                 </button>
               ) : (
                 <button
