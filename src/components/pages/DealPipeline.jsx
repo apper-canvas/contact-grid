@@ -15,7 +15,8 @@ const [deals, setDeals] = useState([]);
   const [stages, setStages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDeal, setSelectedDeal] = useState(null);
+const [selectedDeal, setSelectedDeal] = useState(null);
+  const [isEditingDeal, setIsEditingDeal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [dealToDelete, setDealToDelete] = useState(null);
   const [isAddingDeal, setIsAddingDeal] = useState(false);
@@ -75,6 +76,30 @@ const [deals, setDeals] = useState([]);
 
 const handleEditDeal = (deal) => {
     setSelectedDeal(deal);
+    setIsEditingDeal(true);
+  };
+
+  const handleUpdateDeal = async (dealData) => {
+    if (!selectedDeal) return;
+    
+    setIsCreatingDeal(true);
+    try {
+      await updateDeal(selectedDeal.Id, dealData);
+      setIsEditingDeal(false);
+      setSelectedDeal(null);
+      await loadData();
+      toast.success('Deal updated successfully!');
+    } catch (error) {
+      console.error('Failed to update deal:', error);
+      toast.error('Failed to update deal. Please try again.');
+    } finally {
+      setIsCreatingDeal(false);
+    }
+  };
+
+  const cancelEditDeal = () => {
+    setIsEditingDeal(false);
+    setSelectedDeal(null);
   };
 
   const handleAddDeal = () => {
@@ -215,6 +240,20 @@ const handleEditDeal = (deal) => {
         <DealForm
           onSubmit={handleCreateDeal}
           onCancel={cancelAddDeal}
+          loading={isCreatingDeal}
+        />
+      </Modal>
+
+      {/* Edit Deal Modal */}
+      <Modal
+        isOpen={isEditingDeal}
+        onClose={cancelEditDeal}
+        title="Edit Deal"
+      >
+        <DealForm
+          initialData={selectedDeal}
+          onSubmit={handleUpdateDeal}
+          onCancel={cancelEditDeal}
           loading={isCreatingDeal}
         />
       </Modal>
