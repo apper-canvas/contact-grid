@@ -37,13 +37,18 @@
 "requiresAuth",": true",
     "access",":", "public"]
 },
-  "/deals": {
+"/deals": {
     "component": "DealPipeline",
     "requiresAuth": true,
     "access": "public"
   },
   "/companies": {
     "component": "CompanyManagement",
+    "requiresAuth": true,
+    "access": "public"
+  },
+  "/tasks": {
+    "component": "TaskManagement",
     "requiresAuth": true,
     "access": "public"
   }
