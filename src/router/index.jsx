@@ -6,6 +6,7 @@ import { getRouteConfig } from './route.utils';
 const Root = lazy(() => import('@/layouts/Root'));
 const Layout = lazy(() => import('@/components/organisms/Layout'));
 const ContactManagement = lazy(() => import('@/components/pages/ContactManagement'));
+const DealPipeline = lazy(() => import('@/components/pages/DealPipeline'));
 const NotFound = lazy(() => import('@/components/pages/NotFound'));
 const Login = lazy(() => import('@/components/pages/Login'));
 const Signup = lazy(() => import('@/components/pages/Signup'));
@@ -13,7 +14,6 @@ const Callback = lazy(() => import('@/components/pages/Callback'));
 const ErrorPage = lazy(() => import('@/components/pages/ErrorPage'));
 const ResetPassword = lazy(() => import('@/components/pages/ResetPassword'));
 const PromptPassword = lazy(() => import('@/components/pages/PromptPassword'));
-
 // createRoute Helper Function
 const createRoute = ({
   path,
@@ -63,9 +63,13 @@ const appRoutes = [
     index: true,
     element: <ContactManagement />
   }),
-  createRoute({
+createRoute({
     path: "contacts",
     element: <ContactManagement />
+  }),
+  createRoute({
+    path: "deals",
+    element: <DealPipeline />
   }),
   createRoute({
     path: "*",

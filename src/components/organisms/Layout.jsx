@@ -237,18 +237,25 @@ return (
             </div>
           </div>
 
-          {/* Navigation Menu */}
+{/* Navigation Menu */}
           <nav className="flex-1 p-4">
             <div className="space-y-2">
               <a
                 href="/"
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors bg-primary/10 text-primary border-r-2 border-primary"
+                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ApperIcon name="Users" size={20} />
                 <span className="font-medium">Contacts</span>
               </a>
+              <a
+                href="/deals"
+                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ApperIcon name="BarChart3" size={20} />
+                <span className="font-medium">Deal Pipeline</span>
+              </a>
             </div>
-</nav>
+          </nav>
           </div>
         </div>
       </aside>
