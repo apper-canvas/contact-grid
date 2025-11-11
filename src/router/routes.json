@@ -36,9 +36,14 @@
           },
 "requiresAuth",": true",
     "access",":", "public"]
-  },
+},
   "/deals": {
     "component": "DealPipeline",
+    "requiresAuth": true,
+    "access": "public"
+  },
+  "/companies": {
+    "component": "CompanyManagement",
     "requiresAuth": true,
     "access": "public"
   }

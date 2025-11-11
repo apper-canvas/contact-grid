@@ -2,26 +2,34 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import ApperIcon from "@/components/ApperIcon";
-import { useAuth } from "@/layouts/Root";
 import { cn } from "@/utils/cn";
+import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
+import { useAuth } from "@/layouts/Root";
+import ApperIcon from "@/components/ApperIcon";
 
-const Layout = () => {
-  const location = useLocation();
-  const { user } = useSelector((state) => state.user);
-  const { logout } = useAuth();
-const [selectedContact, setSelectedContact] = useState(null);
-  const [showContactForm, setShowContactForm] = useState(false);
-  const [editingContact, setEditingContact] = useState(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [contactToDelete, setContactToDelete] = useState(null);
-  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
-  const [contactsToDelete, setContactsToDelete] = useState([]);
-  const [bulkDeleteClearSelection, setBulkDeleteClearSelection] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+function Layout() {
+const location = useLocation()
+  const { user } = useSelector((state) => state.user)
+  const { logout } = useAuth()
+  
+  // State declarations
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [selectedContact, setSelectedContact] = useState(null)
+  const [showContactForm, setShowContactForm] = useState(false)
+  const [editingContact, setEditingContact] = useState(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [contactToDelete, setContactToDelete] = useState(null)
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false)
+  const [contactsToDelete, setContactsToDelete] = useState([])
+  const [bulkDeleteClearSelection, setBulkDeleteClearSelection] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const navigation = [
+    { name: 'Contacts', href: '/contacts', icon: 'Users' },
+    { name: 'Deals', href: '/deals', icon: 'TrendingUp' },
+    { name: 'Companies', href: '/companies', icon: 'Building2' },
+  ]
   // App-level handlers
   const refreshContacts = () => {
     setRefreshTrigger(prev => prev + 1);
