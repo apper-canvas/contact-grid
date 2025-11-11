@@ -66,13 +66,12 @@ const handleAddContact = () => {
   const handleDeleteContact = (contact) => {
     setContactToDelete(contact);
     setShowDeleteDialog(true);
-  };
+};
 
   const handleFormSubmit = async (formData) => {
     setLoading(true);
-    
     try {
-if (editingContact) {
+      if (editingContact) {
         const updatedContact = await updateContact(editingContact.id, formData);
         if (updatedContact) {
           setSelectedContact(updatedContact);

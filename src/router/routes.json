@@ -37,8 +37,16 @@
 "requiresAuth",": true",
     "access",":", "public"]
   },
-  "/deals": {
+"/deals": {
     "component": "DealPipeline",
+    "access": "authenticated"
+  },
+  "/companies": {
+    "component": "CompanyProfile",
+    "access": "authenticated"
+  },
+  "/companies/:id": {
+    "component": "CompanyProfile",
     "requiresAuth": true,
     "access": "public"
   }
