@@ -196,9 +196,9 @@ setShowDeleteDialog(false);
     cancelDelete,
     confirmBulkDelete,
     cancelBulkDelete
-  };
+};
 
-return (
+  return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
       {/* Mobile Menu Button */}
       <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
@@ -221,57 +221,57 @@ return (
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
-<div className="relative z-30 bg-white h-full">
+        <div className="relative z-30 bg-white h-full">
           <div className="h-full flex flex-col">
             {/* Logo Section */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary rounded-lg">
-                <ApperIcon name="Users" size={24} className="text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Contact Hub</h1>
-                <p className="text-xs text-gray-600">Manage efficiently</p>
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-primary rounded-lg">
+                  <ApperIcon name="Users" size={24} className="text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Contact Hub</h1>
+                  <p className="text-xs text-gray-600">Manage efficiently</p>
+                </div>
               </div>
             </div>
-          </div>
 
-{/* Navigation Menu */}
-<nav className="flex-1 p-4">
-            <div className="space-y-2">
-              <Link
-                to="/"
-                className={cn(
-                  "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                  location.pathname === "/" 
-                    ? "bg-blue-50 text-blue-600" 
-                    : "text-gray-700 hover:bg-gray-100"
-                )}
-              >
-                <ApperIcon name="Users" size={20} />
-                <span className="font-medium">Contacts</span>
-              </Link>
-              <Link
-                to="/deals"
-                className={cn(
-                  "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                  location.pathname === "/deals" 
-                    ? "bg-blue-50 text-blue-600" 
-                    : "text-gray-700 hover:bg-gray-100"
-                )}
-              >
-                <ApperIcon name="BarChart3" size={20} />
-                <span className="font-medium">Deal Pipeline</span>
-              </Link>
-            </div>
-          </nav>
+            {/* Navigation Menu */}
+            <nav className="flex-1 p-4">
+              <div className="space-y-2">
+                <Link
+                  to="/"
+                  className={cn(
+                    "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+                    location.pathname === "/" 
+                      ? "bg-blue-50 text-blue-600" 
+                      : "text-gray-700 hover:bg-gray-100"
+                  )}
+                >
+                  <ApperIcon name="Users" size={20} />
+                  <span className="font-medium">Contacts</span>
+                </Link>
+                <Link
+                  to="/deals"
+                  className={cn(
+                    "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+                    location.pathname === "/deals" 
+                      ? "bg-blue-50 text-blue-600" 
+                      : "text-gray-700 hover:bg-gray-100"
+                  )}
+                >
+                  <ApperIcon name="BarChart3" size={20} />
+                  <span className="font-medium">Deal Pipeline</span>
+                </Link>
+              </div>
+            </nav>
           </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-{/* Top Header with Search, Add Contact, and Profile */}
+        {/* Top Header with Search, Add Contact, and Profile */}
         <header className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200 px-4 lg:px-6 py-3 lg:py-4">
           <div className="flex items-center justify-between">
             {/* Search Bar - Hidden on mobile, shown on desktop */}
@@ -286,9 +286,9 @@ return (
                   className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors bg-gray-50 hover:bg-white"
                 />
               </div>
-</div>
+            </div>
             
-{/* User Menu */}
+            {/* User Menu */}
             <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-6">
               <button
                 onClick={handleAddContact}
@@ -316,7 +316,7 @@ return (
               </button>
             </div>
           </div>
-</header>
+        </header>
 
         {/* Page Content */}
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
@@ -324,5 +324,7 @@ return (
         </main>
       </div>
     </div>
-);
-}
+  );
+};
+
+export default Layout;
