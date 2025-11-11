@@ -71,9 +71,9 @@ createRoute({
     element: <CompanyProfile />,
     index: false,
   }),
-  createRoute({
+createRoute({
     path: "companies/:id",
-    element: <DealPipeline />
+    element: <CompanyProfile />
   }),
   createRoute({
     path: "*",
