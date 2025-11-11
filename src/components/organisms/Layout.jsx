@@ -48,9 +48,14 @@ const handleContactSelect = (contact) => {
     setShowBulkDeleteDialog(true);
   };
 
-  const handleAddContact = () => {
+const handleAddContact = () => {
     setEditingContact(null);
     setShowContactForm(true);
+  };
+
+  const handleAddDeal = () => {
+    // This will be handled by the DealPipeline component through props
+    // The actual implementation is in the DealPipeline component
   };
 
   const handleEditContact = (contact) => {
@@ -291,12 +296,12 @@ setShowDeleteDialog(false);
             {/* User Menu */}
             <div className="flex items-center space-x-2 lg:space-x-4 lg:ml-6">
 {location.pathname === '/deals' ? (
-<button
-                  onClick={handleAddContact}
+                <button
+                  onClick={handleAddDeal}
                   className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 >
-                  <ApperIcon name="UserPlus" size={18} />
-                  <span>Add Contact</span>
+                  <ApperIcon name="Plus" size={18} />
+                  <span>Add Deal</span>
                 </button>
               ) : (
                 <button

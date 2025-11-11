@@ -26,7 +26,7 @@ const [selectedDeal, setSelectedDeal] = useState(null);
     loadData();
   }, []);
 
-  const loadData = async () => {
+const loadData = async () => {
     setLoading(true);
     setError(null);
     
@@ -44,6 +44,28 @@ const [selectedDeal, setSelectedDeal] = useState(null);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddDeal = () => {
+    setSelectedDeal(null);
+    setIsCreatingDeal(true);
+  };
+
+  const handleCreateDeal = async (dealData) => {
+    try {
+      await createDeal(dealData);
+      setIsCreatingDeal(false);
+      await loadData();
+      toast.success('Deal created successfully!');
+    } catch (error) {
+      console.error('Failed to create deal:', error);
+      toast.error('Failed to create deal. Please try again.');
+    }
+  };
+
+  const cancelCreateDeal = () => {
+    setIsCreatingDeal(false);
+    setSelectedDeal(null);
   };
 
   const handleDealMove = async (dealId, newStageId) => {
@@ -172,6 +194,15 @@ const handleEditDeal = (deal) => {
             
 <div className="flex items-center space-x-3">
               <Button 
+                onClick={handleAddDeal}
+                variant="default"
+                size="sm"
+              >
+                <ApperIcon name="Plus" size={16} className="mr-2" />
+                Add Deal
+              </Button>
+              
+              <Button 
                 onClick={loadData}
                 variant="outline"
                 size="sm"
@@ -202,6 +233,19 @@ const handleEditDeal = (deal) => {
         </div>
       </div>
 
+
+{/* Create Deal Modal */}
+      <Modal
+        isOpen={isCreatingDeal && !selectedDeal}
+        onClose={cancelCreateDeal}
+        title="Create New Deal"
+      >
+        <DealForm
+          onSubmit={handleCreateDeal}
+          onCancel={cancelCreateDeal}
+          loading={isCreatingDeal}
+        />
+      </Modal>
 
       {/* Edit Deal Modal */}
       <Modal
