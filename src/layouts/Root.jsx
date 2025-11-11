@@ -62,13 +62,46 @@ export default function Root() {
     navigate(redirectUrl, { replace: true });
   }, [isInitialized, user, location.pathname, location.search, navigate]);
 
+// Helper function to wait for SDK to be fully loaded
+  const waitForSDK = () => {
+    return new Promise((resolve, reject) => {
+      let attempts = 0;
+      const maxAttempts = 50; // 5 second timeout total
+      
+      const checkSDK = () => {
+        attempts++;
+        
+        if (window.ApperSDK && window.ApperSDK.ApperClient && window.ApperSDK.ApperUI) {
+          console.log('ApperSDK loaded successfully');
+          resolve(true);
+          return;
+        }
+        
+        if (attempts >= maxAttempts) {
+          console.error('ApperSDK failed to load within timeout period');
+          reject(new Error('SDK loading timeout'));
+          return;
+        }
+        
+        // Check again in 100ms
+        setTimeout(checkSDK, 100);
+      };
+      
+      checkSDK();
+    });
+  };
+
   const initializeAuth = async () => {
     try {
-      // Wait for SDK to load and get client
+      // Wait for SDK to be fully loaded
+      console.log('Waiting for ApperSDK to load...');
+      await waitForSDK();
+      
+      // Get client after SDK is confirmed loaded
       const apperClient = getApperClient();
 
-      if (!apperClient || !window.ApperSDK) {
-        console.error('Failed to initialize ApperSDK or ApperClient');
+      if (!apperClient) {
+        console.error('Failed to initialize ApperClient after SDK loaded');
         dispatch(clearUser());
         handleAuthComplete();
         return;
@@ -76,6 +109,7 @@ export default function Root() {
 
       const { ApperUI } = window.ApperSDK;
 
+      console.log('Setting up ApperUI authentication...');
       ApperUI.setup(apperClient, {
         target: "#authentication",
         clientId: import.meta.env.VITE_APPER_PROJECT_ID,
