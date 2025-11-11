@@ -32,16 +32,26 @@ export async function getAllCompanies(filters = {}) {
       }];
     }
 
-    const response = await apperClient.fetchRecords(TABLE_NAME, params);
+const response = await apperClient.fetchRecords(TABLE_NAME, params);
 
+    // Check for API failure first
+    if (!response.success) {
+      console.error("API Error fetching companies:", response.message);
+      throw new Error(response.message || 'Failed to fetch companies');
+    }
+
+    // Handle successful response with no data
     if (!response?.data?.length) {
+      console.info("No companies found in database - this may be expected for new installations");
       return [];
     }
 
+    console.info(`Successfully loaded ${response.data.length} companies`);
     return response.data;
   } catch (error) {
     console.error("Error fetching companies:", error?.response?.data?.message || error);
-    return [];
+    // Re-throw error so calling component can distinguish between API failure and empty results
+    throw new Error(error.message || 'Failed to load companies');
   }
 }
 

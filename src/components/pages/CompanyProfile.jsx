@@ -36,17 +36,23 @@ export default function CompanyProfile() {
     }
   }, [id, companies]);
 
-  const loadCompanies = async () => {
+const loadCompanies = async () => {
     setLoading(true);
     setError(null);
     try {
       const result = await getAllCompanies();
+      console.info(`Loaded ${result.length} companies from API`);
       setCompanies(result);
+      
+      // Only show "no companies found" if we successfully connected but got no results
       if (result.length === 0) {
-        setError('No companies found');
+        setError('No companies found. Create your first company to get started.');
       }
     } catch (err) {
-      setError('Failed to load companies');
+      console.error('Failed to load companies:', err);
+      // This is an API/connection error, not an empty result
+      setError(`Failed to load companies: ${err.message}`);
+      setCompanies([]); // Ensure companies is empty on error
     } finally {
       setLoading(false);
     }
