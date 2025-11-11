@@ -61,10 +61,17 @@ return (
         />
       </Modal>
 
-      {/* Delete Confirmation Dialog */}
+{/* Delete Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showDeleteDialog}
-onClose={cancelDelete}
+        title="Delete Contact"
+        message={`Are you sure you want to delete ${contactToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete Contact"
+        cancelText="Cancel"
+        onConfirm={confirmDelete}
+        onClose={cancelDelete}
+        type="danger"
+        loading={loading}
       />
 
       {/* Bulk Delete Confirmation Dialog */}
@@ -76,12 +83,6 @@ onClose={cancelDelete}
         cancelText="Cancel"
         onConfirm={confirmBulkDelete}
         onClose={cancelBulkDelete}
-        loading={loading}
-        onConfirm={confirmDelete}
-        title="Delete Contact"
-        message={`Are you sure you want to delete ${contactToDelete?.name}? This action cannot be undone.`}
-        confirmText="Delete Contact"
-        cancelText="Cancel"
         type="danger"
         loading={loading}
       />

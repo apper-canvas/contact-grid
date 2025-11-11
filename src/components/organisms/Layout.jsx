@@ -12,7 +12,7 @@ const location = useLocation()
   const { user } = useSelector((state) => state.user)
   const { logout } = useAuth()
   
-  // State declarations
+// State declarations
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [selectedContact, setSelectedContact] = useState(null)
   const [showContactForm, setShowContactForm] = useState(false)
@@ -25,10 +25,11 @@ const location = useLocation()
   const [loading, setLoading] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
-  const navigation = [
-    { name: 'Contacts', href: '/contacts', icon: 'Users' },
+const navigation = [
+    { name: 'Contacts', href: '/', icon: 'Users' },
+    { name: 'Tasks', href: '/tasks', icon: 'CheckSquare' },
     { name: 'Deals', href: '/deals', icon: 'TrendingUp' },
-    { name: 'Companies', href: '/companies', icon: 'Building2' },
+    { name: 'Companies', href: '/companies', icon: 'Building2' }
   ]
   // App-level handlers
   const refreshContacts = () => {
@@ -62,8 +63,12 @@ const handleAddContact = () => {
   };
 
   const handleAddDeal = () => {
-    // This will be handled by the DealPipeline component through props
+// This will be handled by the DealPipeline component through props
     // The actual implementation is in the DealPipeline component
+  };
+
+  const handleAddTask = () => {
+    // This will be handled by task management components
   };
 
   const handleEditContact = (contact) => {
@@ -187,7 +192,7 @@ setShowDeleteDialog(false);
   };
 
   // Outlet context to share with child routes
-  const outletContext = {
+const outletContext = {
     selectedContact,
     showContactForm,
     editingContact,
@@ -209,7 +214,7 @@ setShowDeleteDialog(false);
     cancelDelete,
     confirmBulkDelete,
     cancelBulkDelete
-};
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
@@ -250,44 +255,23 @@ setShowDeleteDialog(false);
             </div>
 
             {/* Navigation Menu */}
-            <nav className="flex-1 p-4">
+<nav className="flex-1 p-4">
               <div className="space-y-2">
-                <Link
-                  to="/"
-                  className={cn(
-                    "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                    location.pathname === "/" 
-                      ? "bg-blue-50 text-blue-600" 
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                >
-                  <ApperIcon name="Users" size={20} />
-                  <span className="font-medium">Contacts</span>
-                </Link>
-                <Link
-                  to="/deals"
-                  className={cn(
-                    "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                    location.pathname === "/deals" 
-                      ? "bg-blue-50 text-blue-600" 
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                >
-<ApperIcon name="BarChart3" size={20} />
-                  <span className="font-medium">Deal Pipeline</span>
-                </Link>
-                <Link
-                  to="/companies"
-                  className={cn(
-                    "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
-                    location.pathname === "/companies" 
-                      ? "bg-blue-50 text-blue-600" 
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                >
-                  <ApperIcon name="Building2" size={20} />
-                  <span className="font-medium">Companies</span>
-                </Link>
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
+                      location.pathname === item.href 
+                        ? "bg-blue-50 text-blue-600" 
+                        : "text-gray-700 hover:bg-gray-100"
+                    )}
+                  >
+                    <ApperIcon name={item.icon} size={20} />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                ))}
               </div>
             </nav>
           </div>
@@ -322,6 +306,14 @@ setShowDeleteDialog(false);
                 >
                   <ApperIcon name="Plus" size={18} />
                   <span>Add Deal</span>
+                </button>
+              ) : location.pathname === '/tasks' ? (
+                <button
+                  onClick={handleAddTask}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  <ApperIcon name="Plus" size={18} />
+                  <span>Add Task</span>
                 </button>
               ) : (
                 <button
