@@ -4,11 +4,11 @@ import { toast } from 'react-toastify';
 export const getAllDeals = async () => {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.fetchRecords('deal_c', {
+const response = await apperClient.fetchRecords('deal_c', {
       fields: [
         {"field": {"Name": "Name"}},
         {"field": {"Name": "value_c"}},
-        {"field": {"Name": "contact_c"}},
+        {"field": {"Name": "contact_c"}, "referenceField": {"field": {"Name": "name_c"}}},
         {"field": {"Name": "deal_stage_c"}},
         {"field": {"Name": "progress_c"}},
         {"field": {"Name": "CreatedOn"}},
@@ -34,11 +34,11 @@ export const getAllDeals = async () => {
 export const getDealById = async (dealId) => {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.getRecordById('deal_c', dealId, {
+const response = await apperClient.getRecordById('deal_c', dealId, {
       fields: [
         {"field": {"Name": "Name"}},
         {"field": {"Name": "value_c"}},
-        {"field": {"Name": "contact_c"}},
+        {"field": {"Name": "contact_c"}, "referenceField": {"field": {"Name": "name_c"}}},
         {"field": {"Name": "deal_stage_c"}},
         {"field": {"Name": "progress_c"}},
         {"field": {"Name": "CreatedOn"}},
