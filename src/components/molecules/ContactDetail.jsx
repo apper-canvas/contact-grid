@@ -36,6 +36,11 @@ return (
             <p className="text-base lg:text-lg text-secondary">
               {contact.position || 'No Position'} at {contact.company || 'No Company'}
             </p>
+            {contact.contactPersonName && (
+              <p className="text-sm text-gray-600">
+                Contact Person: {contact.contactPersonName}
+              </p>
+            )}
           </div>
 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full lg:w-auto">
             <Button
@@ -63,7 +68,43 @@ size="sm"
       {/* Contact Information */}
 <div className="p-4 lg:p-6 space-y-6">
         {/* Basic Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+          {contact.firstName && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">
+                First Name
+              </h3>
+              <div className="flex items-center space-x-2">
+                <ApperIcon name="User" size={16} className="text-gray-400" />
+                <span className="text-gray-900">{contact.firstName}</span>
+              </div>
+            </div>
+          )}
+
+          {contact.lastName && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">
+                Last Name
+              </h3>
+              <div className="flex items-center space-x-2">
+                <ApperIcon name="User" size={16} className="text-gray-400" />
+                <span className="text-gray-900">{contact.lastName}</span>
+              </div>
+            </div>
+          )}
+
+          {contact.contactPersonName && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-2">
+                Contact Person Name
+              </h3>
+              <div className="flex items-center space-x-2">
+                <ApperIcon name="UserCheck" size={16} className="text-gray-400" />
+                <span className="text-gray-900">{contact.contactPersonName}</span>
+              </div>
+            </div>
+          )}
+
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-2">
               Email Address
@@ -115,6 +156,18 @@ href={`mailto:${contact.email || ''}`}
               <span className="text-gray-900">{contact.position || 'No Position'}</span>
             </div>
           </div>
+
+          {contact.address && (
+            <div className="lg:col-span-2">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">
+                Address
+              </h3>
+              <div className="flex items-start space-x-2">
+                <ApperIcon name="MapPin" size={16} className="text-gray-400 mt-0.5" />
+                <span className="text-gray-900 whitespace-pre-line">{contact.address}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tags */}

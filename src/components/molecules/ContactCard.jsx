@@ -36,12 +36,16 @@ return (
           <p className="text-secondary text-sm lg:text-base truncate">
             {contact.position || 'No Position'} at {contact.company || 'No Company'}
           </p>
+          {contact.contactPersonName && (
+            <p className="text-gray-600 text-xs lg:text-sm truncate">
+              Contact: {contact.contactPersonName}
+            </p>
+          )}
         </div>
 <div className="text-xs text-gray-400 flex-shrink-0">
           {formatDate(contact.updatedAt)}
         </div>
       </div>
-
 <div className="space-y-2 mb-4">
 <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
           <ApperIcon name="Mail" size={14} className="mr-2 text-gray-400 flex-shrink-0" />
@@ -51,6 +55,12 @@ return (
 <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
             <ApperIcon name="Phone" size={14} className="mr-2 text-gray-400 flex-shrink-0" />
             <span className="truncate">{contact.phone}</span>
+          </div>
+        )}
+        {contact.address && (
+          <div className="flex items-center text-sm text-gray-600 min-h-[20px]">
+            <ApperIcon name="MapPin" size={14} className="mr-2 text-gray-400 flex-shrink-0" />
+            <span className="truncate">{contact.address}</span>
           </div>
         )}
       </div>

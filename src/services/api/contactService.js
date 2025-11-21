@@ -7,7 +7,7 @@ const TABLE_NAME = 'contact_c';
 export const getAllContacts = async () => {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.fetchRecords(TABLE_NAME, {
+const response = await apperClient.fetchRecords(TABLE_NAME, {
       fields: [
         {"field": {"Name": "Id"}},
         {"field": {"Name": "name_c"}},
@@ -18,7 +18,11 @@ export const getAllContacts = async () => {
         {"field": {"Name": "notes_c"}},
         {"field": {"Name": "tags_c"}},
         {"field": {"Name": "created_at_c"}},
-        {"field": {"Name": "updated_at_c"}}
+        {"field": {"Name": "updated_at_c"}},
+        {"field": {"Name": "address_c"}},
+        {"field": {"Name": "last_name_c"}},
+        {"field": {"Name": "first_name_c"}},
+        {"field": {"Name": "contact_person_name_c"}}
       ],
       orderBy: [{"fieldName": "created_at_c", "sorttype": "DESC"}],
       pagingInfo: {"limit": 100, "offset": 0}
@@ -31,7 +35,7 @@ export const getAllContacts = async () => {
     }
 
     // Transform database records to match UI expectations
-    return response.data?.map(record => ({
+return response.data?.map(record => ({
       id: record.Id,
       name: record.name_c || '',
       email: record.email_c || '',
@@ -41,7 +45,11 @@ export const getAllContacts = async () => {
       notes: record.notes_c || '',
       tags: record.tags_c ? record.tags_c.split(',').map(tag => tag.trim()).filter(Boolean) : [],
       createdAt: record.created_at_c || new Date().toISOString(),
-      updatedAt: record.updated_at_c || new Date().toISOString()
+      updatedAt: record.updated_at_c || new Date().toISOString(),
+      address: record.address_c || '',
+      lastName: record.last_name_c || '',
+      firstName: record.first_name_c || '',
+      contactPersonName: record.contact_person_name_c || ''
     })) || [];
   } catch (error) {
     console.error("Error fetching contacts:", error?.response?.data?.message || error);
@@ -54,7 +62,7 @@ export const getContactById = async (id) => {
   try {
     const apperClient = getApperClient();
     const response = await apperClient.getRecordById(TABLE_NAME, parseInt(id), {
-      fields: [
+fields: [
         {"field": {"Name": "Id"}},
         {"field": {"Name": "name_c"}},
         {"field": {"Name": "email_c"}},
@@ -64,7 +72,11 @@ export const getContactById = async (id) => {
         {"field": {"Name": "notes_c"}},
         {"field": {"Name": "tags_c"}},
         {"field": {"Name": "created_at_c"}},
-        {"field": {"Name": "updated_at_c"}}
+        {"field": {"Name": "updated_at_c"}},
+        {"field": {"Name": "address_c"}},
+        {"field": {"Name": "last_name_c"}},
+        {"field": {"Name": "first_name_c"}},
+        {"field": {"Name": "contact_person_name_c"}}
       ]
     });
 
@@ -77,7 +89,7 @@ export const getContactById = async (id) => {
     if (!record) return null;
 
     // Transform database record to match UI expectations
-    return {
+return {
       id: record.Id,
       name: record.name_c || '',
       email: record.email_c || '',
@@ -87,7 +99,11 @@ export const getContactById = async (id) => {
       notes: record.notes_c || '',
       tags: record.tags_c ? record.tags_c.split(',').map(tag => tag.trim()).filter(Boolean) : [],
       createdAt: record.created_at_c || new Date().toISOString(),
-      updatedAt: record.updated_at_c || new Date().toISOString()
+      updatedAt: record.updated_at_c || new Date().toISOString(),
+      address: record.address_c || '',
+      lastName: record.last_name_c || '',
+      firstName: record.first_name_c || '',
+      contactPersonName: record.contact_person_name_c || ''
     };
   } catch (error) {
     console.error(`Error fetching contact ${id}:`, error?.response?.data?.message || error);
@@ -101,7 +117,7 @@ export const createContact = async (contactData) => {
     const apperClient = getApperClient();
     const now = new Date().toISOString();
     
-    const params = {
+const params = {
       records: [{
         name_c: contactData.name || '',
         email_c: contactData.email || '',
@@ -111,7 +127,11 @@ export const createContact = async (contactData) => {
         notes_c: contactData.notes || '',
         tags_c: Array.isArray(contactData.tags) ? contactData.tags.join(',') : '',
         created_at_c: now,
-        updated_at_c: now
+        updated_at_c: now,
+        address_c: contactData.address || '',
+        last_name_c: contactData.lastName || '',
+        first_name_c: contactData.firstName || '',
+        contact_person_name_c: contactData.contactPersonName || ''
       }]
     };
 
@@ -136,7 +156,7 @@ export const createContact = async (contactData) => {
 
       if (successful.length > 0) {
         const record = successful[0].data;
-        return {
+return {
           id: record.Id,
           name: record.name_c || '',
           email: record.email_c || '',
@@ -146,7 +166,11 @@ export const createContact = async (contactData) => {
           notes: record.notes_c || '',
           tags: record.tags_c ? record.tags_c.split(',').map(tag => tag.trim()).filter(Boolean) : [],
           createdAt: record.created_at_c || now,
-          updatedAt: record.updated_at_c || now
+          updatedAt: record.updated_at_c || now,
+          address: record.address_c || '',
+          lastName: record.last_name_c || '',
+          firstName: record.first_name_c || '',
+          contactPersonName: record.contact_person_name_c || ''
         };
       }
     }
@@ -164,7 +188,7 @@ export const updateContact = async (id, contactData) => {
     const now = new Date().toISOString();
     
     const params = {
-      records: [{
+records: [{
         Id: parseInt(id),
         name_c: contactData.name || '',
         email_c: contactData.email || '',
@@ -173,7 +197,11 @@ export const updateContact = async (id, contactData) => {
         position_c: contactData.position || '',
         notes_c: contactData.notes || '',
         tags_c: Array.isArray(contactData.tags) ? contactData.tags.join(',') : '',
-        updated_at_c: now
+        updated_at_c: now,
+        address_c: contactData.address || '',
+        last_name_c: contactData.lastName || '',
+        first_name_c: contactData.firstName || '',
+        contact_person_name_c: contactData.contactPersonName || ''
       }]
     };
 
@@ -198,7 +226,7 @@ export const updateContact = async (id, contactData) => {
 
       if (successful.length > 0) {
         const record = successful[0].data;
-        return {
+return {
           id: record.Id,
           name: record.name_c || '',
           email: record.email_c || '',
@@ -208,7 +236,11 @@ export const updateContact = async (id, contactData) => {
           notes: record.notes_c || '',
           tags: record.tags_c ? record.tags_c.split(',').map(tag => tag.trim()).filter(Boolean) : [],
           createdAt: record.created_at_c || contactData.createdAt || now,
-          updatedAt: record.updated_at_c || now
+          updatedAt: record.updated_at_c || now,
+          address: record.address_c || '',
+          lastName: record.last_name_c || '',
+          firstName: record.first_name_c || '',
+          contactPersonName: record.contact_person_name_c || ''
         };
       }
     }
@@ -264,7 +296,7 @@ export const searchContacts = async (query) => {
     }
 
     const response = await apperClient.fetchRecords(TABLE_NAME, {
-      fields: [
+fields: [
         {"field": {"Name": "Id"}},
         {"field": {"Name": "name_c"}},
         {"field": {"Name": "email_c"}},
@@ -274,11 +306,15 @@ export const searchContacts = async (query) => {
         {"field": {"Name": "notes_c"}},
         {"field": {"Name": "tags_c"}},
         {"field": {"Name": "created_at_c"}},
-        {"field": {"Name": "updated_at_c"}}
+        {"field": {"Name": "updated_at_c"}},
+        {"field": {"Name": "address_c"}},
+        {"field": {"Name": "last_name_c"}},
+        {"field": {"Name": "first_name_c"}},
+        {"field": {"Name": "contact_person_name_c"}}
       ],
       whereGroups: [{
         "operator": "OR",
-        "subGroups": [
+"subGroups": [
           {
             "conditions": [
               {"fieldName": "name_c", "operator": "Contains", "values": [searchTerm]},
@@ -286,7 +322,11 @@ export const searchContacts = async (query) => {
               {"fieldName": "company_c", "operator": "Contains", "values": [searchTerm]},
               {"fieldName": "position_c", "operator": "Contains", "values": [searchTerm]},
               {"fieldName": "notes_c", "operator": "Contains", "values": [searchTerm]},
-              {"fieldName": "tags_c", "operator": "Contains", "values": [searchTerm]}
+              {"fieldName": "tags_c", "operator": "Contains", "values": [searchTerm]},
+              {"fieldName": "address_c", "operator": "Contains", "values": [searchTerm]},
+              {"fieldName": "last_name_c", "operator": "Contains", "values": [searchTerm]},
+              {"fieldName": "first_name_c", "operator": "Contains", "values": [searchTerm]},
+              {"fieldName": "contact_person_name_c", "operator": "Contains", "values": [searchTerm]}
             ],
             "operator": "OR"
           }
@@ -302,7 +342,7 @@ export const searchContacts = async (query) => {
     }
 
     // Transform database records to match UI expectations
-    return response.data?.map(record => ({
+return response.data?.map(record => ({
       id: record.Id,
       name: record.name_c || '',
       email: record.email_c || '',
@@ -312,7 +352,11 @@ export const searchContacts = async (query) => {
       notes: record.notes_c || '',
       tags: record.tags_c ? record.tags_c.split(',').map(tag => tag.trim()).filter(Boolean) : [],
       createdAt: record.created_at_c || new Date().toISOString(),
-      updatedAt: record.updated_at_c || new Date().toISOString()
+      updatedAt: record.updated_at_c || new Date().toISOString(),
+      address: record.address_c || '',
+      lastName: record.last_name_c || '',
+      firstName: record.first_name_c || '',
+      contactPersonName: record.contact_person_name_c || ''
     })) || [];
   } catch (error) {
     console.error("Error searching contacts:", error?.response?.data?.message || error);

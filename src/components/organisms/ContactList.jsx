@@ -224,6 +224,9 @@ if (filteredContacts && filteredContacts.length > 0) {
                           />
                         </th>
                         <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[200px]">Name</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[130px]">First Name</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[130px]">Last Name</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[160px]">Contact Person</th>
                         <th
                             className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[150px]">Company</th>
                         <th
@@ -232,6 +235,7 @@ if (filteredContacts && filteredContacts.length > 0) {
                             className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[150px]">Phone</th>
                         <th
                             className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[140px]">Position</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[180px]">Address</th>
                         <th
                             className="text-left py-3 px-4 text-sm font-semibold text-gray-900 min-w-[200px]">Notes</th>
                         <th
@@ -268,6 +272,15 @@ key={contact.id}
                                 </div>
                             </div>
                         </td>
+                        <td className="py-3 px-4 min-w-[130px]">
+                            <p className="text-sm text-gray-900 truncate">{contact.firstName || "-"}</p>
+                        </td>
+                        <td className="py-3 px-4 min-w-[130px]">
+                            <p className="text-sm text-gray-900 truncate">{contact.lastName || "-"}</p>
+                        </td>
+                        <td className="py-3 px-4 min-w-[160px]">
+                            <p className="text-sm text-gray-900 truncate">{contact.contactPersonName || "-"}</p>
+                        </td>
                         <td className="py-3 px-4 min-w-[150px]">
                             <p className="text-sm text-gray-900 truncate">{contact.company || "-"}</p>
                         </td>
@@ -279,6 +292,11 @@ key={contact.id}
                         </td>
                         <td className="py-3 px-4 min-w-[140px]">
                             <p className="text-sm text-gray-900 truncate">{contact.position || "-"}</p>
+                        </td>
+                        <td className="py-3 px-4 min-w-[180px]">
+                            <p className="text-sm text-gray-900 truncate" title={contact.address || ""}>
+                                {contact.address ? contact.address.length > 40 ? `${contact.address.substring(0, 40)}...` : contact.address : "-"}
+                            </p>
                         </td>
                         <td className="py-3 px-4 min-w-[200px]">
                             <p className="text-sm text-gray-900 truncate" title={contact.notes || ""}>

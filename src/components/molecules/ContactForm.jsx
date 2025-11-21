@@ -12,14 +12,18 @@ const ContactForm = ({
   onCancel, 
   loading = false 
 }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     company: "",
     position: "",
     notes: "",
-    tags: []
+    tags: [],
+    address: "",
+    lastName: "",
+    firstName: "",
+    contactPersonName: ""
   });
 
   const [availableTags, setAvailableTags] = useState([]);
@@ -35,7 +39,11 @@ setFormData({
         company: initialData.company || "",
         position: initialData.position || "",
         notes: initialData.notes || "",
-        tags: Array.isArray(initialData.tags) ? initialData.tags : []
+        tags: Array.isArray(initialData.tags) ? initialData.tags : [],
+        address: initialData.address || "",
+        lastName: initialData.lastName || "",
+        firstName: initialData.firstName || "",
+        contactPersonName: initialData.contactPersonName || ""
       });
     }
   }, [initialData]);
@@ -126,9 +134,31 @@ const suggestedTags = availableTags.filter(tag =>
   );
 
 return (
-    <form onSubmit={handleSubmit} className="space-y-6 pb-2">
+<form onSubmit={handleSubmit} className="space-y-6 pb-2">
       {/* Basic Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            First Name
+          </label>
+          <Input
+            value={formData.firstName}
+            onChange={handleChange("firstName")}
+            placeholder="Enter first name"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Last Name
+          </label>
+          <Input
+            value={formData.lastName}
+            onChange={handleChange("lastName")}
+            placeholder="Enter last name"
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Full Name *
@@ -142,6 +172,17 @@ return (
           {errors.name && (
             <p className="text-error text-sm mt-1">{errors.name}</p>
           )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Contact Person Name
+          </label>
+          <Input
+            value={formData.contactPersonName}
+            onChange={handleChange("contactPersonName")}
+            placeholder="Enter contact person name"
+          />
         </div>
 
         <div>
@@ -185,6 +226,18 @@ return (
           {errors.company && (
             <p className="text-error text-sm mt-1">{errors.company}</p>
           )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Address
+          </label>
+          <Textarea
+            value={formData.address}
+            onChange={handleChange("address")}
+            placeholder="Enter address"
+            rows={3}
+          />
         </div>
       </div>
 
