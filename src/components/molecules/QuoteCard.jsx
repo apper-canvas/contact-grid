@@ -91,17 +91,17 @@ const QuoteCard = ({
         </div>
 
 {/* Customer Info */}
-        <div className="mb-4">
+<div className="mb-4">
           {quote.contact_c && (
             <div className="flex items-center text-sm text-gray-600 mb-1">
               <ApperIcon name="User" size={14} className="mr-2 text-gray-400" />
-              <span className="font-medium">{quote.contact_c.Name}</span>
+              <span className="font-medium">{quote.contact_c?.Name || 'Unknown Contact'}</span>
             </div>
           )}
           {quote.company_c && (
             <div className="flex items-center text-sm text-gray-500">
               <ApperIcon name="Building2" size={14} className="mr-2 text-gray-400" />
-              <span>{quote.company_c.Name}</span>
+              <span>{quote.company_c?.Name || 'Unknown Company'}</span>
             </div>
           )}
         </div>

@@ -31,14 +31,14 @@ if (!contact) {
   }
 
 const contactFields = [
-    { label: 'Name', value: contact.name, icon: 'User' },
-    { label: 'Email', value: contact.email, icon: 'Mail' },
-    { label: 'Phone', value: contact.phone, icon: 'Phone' },
-    { label: 'Company', value: contact.company, icon: 'Building' },
-    { label: 'Position', value: contact.position, icon: 'Briefcase' },
-    { label: 'Notes', value: contact.notes, icon: 'FileText' },
-    { label: 'Created', value: formatDate(contact.createdAt), icon: 'Calendar' },
-    { label: 'Updated', value: formatDate(contact.updatedAt), icon: 'Clock' }
+    { label: 'Name', value: contact.Name || contact.name_c, icon: 'User' },
+    { label: 'Email', value: contact.email_c, icon: 'Mail' },
+    { label: 'Phone', value: contact.phone_c, icon: 'Phone' },
+    { label: 'Company', value: contact.company_c, icon: 'Building' },
+    { label: 'Position', value: contact.position_c, icon: 'Briefcase' },
+    { label: 'Notes', value: contact.notes_c, icon: 'FileText' },
+    { label: 'Created', value: formatDate(contact.CreatedOn || contact.created_at_c), icon: 'Calendar' },
+    { label: 'Updated', value: formatDate(contact.ModifiedOn || contact.updated_at_c), icon: 'Clock' }
   ];
 
 return (
@@ -51,8 +51,8 @@ return (
               <ApperIcon name="User" size={20} className="text-blue-600" />
             </div>
             <div>
-<h2 className="text-xl font-semibold text-gray-900">{contact.name || 'No Name'}</h2>
-              <p className="text-sm text-gray-500">{contact.company || 'No Company'} • {contact.position || 'No Position'}</p>
+<h2 className="text-xl font-semibold text-gray-900">{contact.Name || contact.name_c || 'No Name'}</h2>
+              <p className="text-sm text-gray-500">{contact.company_c || 'No Company'} • {contact.position_c || 'No Position'}</p>
             </div>
 </div>
           <div className="flex items-center space-x-2 w-full lg:w-auto justify-end">
@@ -79,14 +79,14 @@ size="sm"
       </div>
 
       {/* Tags Section */}
-{contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 && (
+{contact.Tags && contact.Tags.length > 0 && (
         <div className="px-4 lg:px-6 py-3 bg-blue-50 border-b border-gray-200">
           <div className="flex items-center space-x-2">
             <ApperIcon name="Tag" size={16} className="text-gray-500" />
             <span className="text-sm font-medium text-gray-700">Tags:</span>
 <div className="flex flex-wrap gap-1 lg:gap-2">
-              {contact.tags.map((tag, index) => (
-                <Tag key={index} text={tag} size="sm" />
+              {contact.Tags.split(',').map((tag, index) => (
+                <Tag key={index} text={tag.trim()} size="sm" />
               ))}
             </div>
           </div>
@@ -147,8 +147,8 @@ size="sm"
       {/* Footer */}
 <div className="px-4 lg:px-6 py-3 bg-gray-50 border-t border-gray-200">
 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-1 lg:gap-0 text-xs text-gray-500">
-          <span>Contact ID: {contact.id}</span>
-          <span>Last updated: {formatDate(contact.updatedAt)}</span>
+          <span>Contact ID: {contact.Id}</span>
+          <span>Last updated: {formatDate(contact.ModifiedOn || contact.updated_at_c)}</span>
         </div>
       </div>
     </div>

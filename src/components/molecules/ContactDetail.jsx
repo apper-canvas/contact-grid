@@ -31,14 +31,14 @@ return (
         <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
           <div>
 <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">
-{contact.name || 'No Name'}
+{contact.Name || contact.name_c || 'No Name'}
             </h2>
             <p className="text-base lg:text-lg text-secondary">
-              {contact.position || 'No Position'} at {contact.company || 'No Company'}
+              {contact.position_c || 'No Position'} at {contact.company_c || 'No Company'}
             </p>
-            {contact.contactPersonName && (
+            {contact.contact_person_name_c && (
               <p className="text-sm text-gray-600">
-                Contact Person: {contact.contactPersonName}
+                Contact Person: {contact.contact_person_name_c}
               </p>
             )}
           </div>
@@ -69,38 +69,38 @@ size="sm"
 <div className="p-4 lg:p-6 space-y-6">
         {/* Basic Info */}
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-          {contact.firstName && (
+{contact.first_name_c && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">
                 First Name
               </h3>
               <div className="flex items-center space-x-2">
                 <ApperIcon name="User" size={16} className="text-gray-400" />
-                <span className="text-gray-900">{contact.firstName}</span>
+                <span className="text-gray-900">{contact.first_name_c}</span>
               </div>
             </div>
           )}
 
-          {contact.lastName && (
+          {contact.last_name_c && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">
                 Last Name
               </h3>
               <div className="flex items-center space-x-2">
                 <ApperIcon name="User" size={16} className="text-gray-400" />
-                <span className="text-gray-900">{contact.lastName}</span>
+                <span className="text-gray-900">{contact.last_name_c}</span>
               </div>
             </div>
           )}
 
-          {contact.contactPersonName && (
+{contact.contact_person_name_c && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">
                 Contact Person Name
               </h3>
               <div className="flex items-center space-x-2">
                 <ApperIcon name="UserCheck" size={16} className="text-gray-400" />
-                <span className="text-gray-900">{contact.contactPersonName}</span>
+                <span className="text-gray-900">{contact.contact_person_name_c}</span>
               </div>
             </div>
           )}
@@ -112,15 +112,15 @@ size="sm"
             <div className="flex items-center space-x-2">
               <ApperIcon name="Mail" size={16} className="text-gray-400" />
               <a 
-href={`mailto:${contact.email || ''}`}
+href={`mailto:${contact.email_c || ''}`}
                 className="text-primary hover:text-accent transition-colors"
               >
-                {contact.email || 'No Email'}
+                {contact.email_c || 'No Email'}
               </a>
             </div>
           </div>
 
-          {contact.phone && (
+{contact.phone_c && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">
                 Phone Number
@@ -128,10 +128,10 @@ href={`mailto:${contact.email || ''}`}
               <div className="flex items-center space-x-2">
                 <ApperIcon name="Phone" size={16} className="text-gray-400" />
 <a 
-                  href={`tel:${contact.phone || ''}`}
+                  href={`tel:${contact.phone_c || ''}`}
                   className="text-primary hover:text-accent transition-colors"
                 >
-                  {contact.phone}
+                  {contact.phone_c}
                 </a>
               </div>
             </div>
@@ -143,7 +143,7 @@ href={`mailto:${contact.email || ''}`}
             </h3>
 <div className="flex items-center space-x-2">
               <ApperIcon name="Building" size={16} className="text-gray-400" />
-              <span className="text-gray-900">{contact.company || 'No Company'}</span>
+              <span className="text-gray-900">{contact.company_c || 'No Company'}</span>
             </div>
           </div>
 
@@ -153,55 +153,54 @@ href={`mailto:${contact.email || ''}`}
             </h3>
 <div className="flex items-center space-x-2">
               <ApperIcon name="Briefcase" size={16} className="text-gray-400" />
-              <span className="text-gray-900">{contact.position || 'No Position'}</span>
+              <span className="text-gray-900">{contact.position_c || 'No Position'}</span>
             </div>
           </div>
 
-          {contact.address && (
+{contact.address_c && (
             <div className="lg:col-span-2">
               <h3 className="text-sm font-medium text-gray-500 mb-2">
                 Address
               </h3>
               <div className="flex items-start space-x-2">
                 <ApperIcon name="MapPin" size={16} className="text-gray-400 mt-0.5" />
-                <span className="text-gray-900 whitespace-pre-line">{contact.address}</span>
+                <span className="text-gray-900 whitespace-pre-line">{contact.address_c}</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Tags */}
-{contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 && (
+{contact.Tags && contact.Tags.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-3">Tags</h3>
             <div className="flex flex-wrap gap-2 lg:gap-3">
-              {contact.tags.map((tag, index) => (
-                <Tag key={index} label={tag} />
+              {contact.Tags.split(',').map((tag, index) => (
+                <Tag key={index} label={tag.trim()} />
               ))}
             </div>
           </div>
         )}
 
         {/* Notes */}
-        {contact.notes && (
+        {contact.notes_c && (
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-3">Notes</h3>
 <div className="bg-gray-50 rounded-lg p-3 lg:p-4">
               <p className="text-sm lg:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {contact.notes}
+                {contact.notes_c}
               </p>
             </div>
           </div>
         )}
-
         {/* Metadata */}
 <div className="pt-4 border-t border-gray-200">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4 text-sm text-gray-500">
             <div>
-              <span className="font-medium">Created:</span> {formatDate(contact.createdAt)}
+              <span className="font-medium">Created:</span> {formatDate(contact.CreatedOn || contact.created_at_c)}
             </div>
             <div>
-              <span className="font-medium">Last Updated:</span> {formatDate(contact.updatedAt)}
+              <span className="font-medium">Last Updated:</span> {formatDate(contact.ModifiedOn || contact.updated_at_c)}
             </div>
           </div>
         </div>

@@ -228,7 +228,7 @@ function QuoteManagement() {
               <h4 className="text-sm font-medium text-gray-900 mb-3">Customer Information</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+<label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
                     Contact
                   </label>
                   <p className="text-sm text-gray-900">{selectedQuote.contact_c?.Name || 'N/A'}</p>

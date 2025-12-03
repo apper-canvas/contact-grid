@@ -74,26 +74,25 @@ const [contacts, setContacts] = useState([]);
 performSearch();
   }, [searchQuery, contacts]);
 
-  // Handle sorting
+// Handle sorting
   useEffect(() => {
     if (filteredContacts && filteredContacts.length > 0) {
       const sortedContacts = [...filteredContacts].sort((a, b) => {
         switch (sortBy) {
           case "name":
-            return (a.name || '').localeCompare(b.name || '');
+            return (a.Name || a.name_c || '').localeCompare(b.Name || b.name_c || '');
           case "company":
-            return (a.company || '').localeCompare(b.company || '');
+            return (a.company_c || '').localeCompare(b.company_c || '');
           case "created":
-            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            return new Date(b.CreatedOn || b.created_at_c || 0) - new Date(a.CreatedOn || a.created_at_c || 0);
           case "updated":
           default:
-            return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+            return new Date(b.ModifiedOn || b.updated_at_c || 0) - new Date(a.ModifiedOn || a.updated_at_c || 0);
         }
       });
       setFilteredContacts(sortedContacts);
     }
-  }, [sortBy, filteredContacts.length]);
-
+  }, [filteredContacts, sortBy]);
 // Handle individual checkbox selection
   const handleContactSelection = (contactId, checked) => {
     if (checked) {
@@ -270,48 +269,48 @@ performSearch();
                                     className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                                     <ApperIcon name="User" size={16} className="text-blue-600" />
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium text-gray-900 truncate">{contact.name || "No Name"}</p>
-                                    <p className="text-xs text-gray-500 truncate">{contact.position || "No position"}</p>
+<div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium text-gray-900 truncate">{contact.Name || contact.name_c || "No Name"}</p>
+                                    <p className="text-xs text-gray-500 truncate">{contact.position_c || "No position"}</p>
                                 </div>
                             </div>
                         </td>
                         <td className="py-3 px-4 min-w-[130px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.firstName || "-"}</p>
+                            <p className="text-sm text-gray-900 truncate">{contact.first_name_c || "-"}</p>
                         </td>
                         <td className="py-3 px-4 min-w-[130px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.lastName || "-"}</p>
+                            <p className="text-sm text-gray-900 truncate">{contact.last_name_c || "-"}</p>
                         </td>
                         <td className="py-3 px-4 min-w-[160px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.contactPersonName || "-"}</p>
+                            <p className="text-sm text-gray-900 truncate">{contact.contact_person_name_c || "-"}</p>
                         </td>
                         <td className="py-3 px-4 min-w-[150px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.company || "-"}</p>
-                        </td>
+                            <p className="text-sm text-gray-900 truncate">{contact.company_c || "-"}</p>
+</td>
                         <td className="py-3 px-4 min-w-[200px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.email || "-"}</p>
+                            <p className="text-sm text-gray-900 truncate">{contact.email_c || "-"}</p>
                         </td>
                         <td className="py-3 px-4 min-w-[150px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.phone || "-"}</p>
+                            <p className="text-sm text-gray-900 truncate">{contact.phone_c || "-"}</p>
                         </td>
                         <td className="py-3 px-4 min-w-[140px]">
-                            <p className="text-sm text-gray-900 truncate">{contact.position || "-"}</p>
+                            <p className="text-sm text-gray-900 truncate">{contact.position_c || "-"}</p>
                         </td>
                         <td className="py-3 px-4 min-w-[180px]">
-                            <p className="text-sm text-gray-900 truncate" title={contact.address || ""}>
-                                {contact.address ? contact.address.length > 40 ? `${contact.address.substring(0, 40)}...` : contact.address : "-"}
+                            <p className="text-sm text-gray-900 truncate" title={contact.address_c || ""}>
+                                {contact.address_c ? contact.address_c.length > 40 ? `${contact.address_c.substring(0, 40)}...` : contact.address_c : "-"}
                             </p>
                         </td>
                         <td className="py-3 px-4 min-w-[200px]">
-                            <p className="text-sm text-gray-900 truncate" title={contact.notes || ""}>
-                                {contact.notes ? contact.notes.length > 50 ? `${contact.notes.substring(0, 50)}...` : contact.notes : "-"}
+                            <p className="text-sm text-gray-900 truncate" title={contact.notes_c || ""}>
+                                {contact.notes_c ? contact.notes_c.length > 50 ? `${contact.notes_c.substring(0, 50)}...` : contact.notes_c : "-"}
                             </p>
                         </td>
                         <td className="py-3 px-4 min-w-[160px]">
                             <div className="flex flex-wrap gap-1 max-w-[150px]">
-                                {contact.tags && Array.isArray(contact.tags) && contact.tags.length > 0 ? contact.tags.slice(0, 3).map((tag, index) => <Tag key={index} text={tag} size="xs" />) : <span className="text-sm text-gray-400">-</span>}
-                                {contact.tags && Array.isArray(contact.tags) && contact.tags.length > 3 && <span className="text-xs text-gray-500 ml-1">+{contact.tags.length - 3}</span>}
-                            </div>
+                                {contact.Tags && contact.Tags.length > 0 ? contact.Tags.split(',').slice(0, 3).map((tag, index) => <Tag key={index} text={tag.trim()} size="xs" />) : <span className="text-sm text-gray-400">-</span>}
+                                {contact.Tags && contact.Tags.split(',').length > 3 && <span className="text-xs text-gray-500 ml-1">+{contact.Tags.split(',').length - 3}</span>}
+</div>
                         </td>
                         <td className="py-3 px-4 text-right">
                             <div className="flex justify-end space-x-1">
