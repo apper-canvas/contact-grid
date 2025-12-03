@@ -7,7 +7,7 @@ import { SortFilter } from '@/components/molecules/SortFilter';
 import { TaskList } from '@/components/organisms/TaskList';
 import { TaskForm } from '@/components/molecules/TaskForm';
 import { Modal } from '@/components/atoms/Modal';
-import { Loading } from '@/components/ui/Loading';
+import Loading from '@/components/ui/Loading';
 import { Empty } from '@/components/ui/Empty';
 import { ErrorView } from '@/components/ui/ErrorView';
 import { taskService } from '@/services/api/taskService';
