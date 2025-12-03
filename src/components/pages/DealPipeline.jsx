@@ -8,20 +8,22 @@ import Modal from "@/components/atoms/Modal";
 import ConfirmDialog from "@/components/molecules/ConfirmDialog";
 import DealStage from "@/components/molecules/DealStage";
 import DealForm from "@/components/molecules/DealForm";
+import DealList from "@/components/organisms/DealList";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
+
 function DealPipeline() {
 const [deals, setDeals] = useState([]);
   const [stages, setStages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-const [selectedDeal, setSelectedDeal] = useState(null);
+  const [selectedDeal, setSelectedDeal] = useState(null);
   const [isEditingDeal, setIsEditingDeal] = useState(false);
   const [isCreatingDeal, setIsCreatingDeal] = useState(false);
   const [filteredStages, setFilteredStages] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [dealToDelete, setDealToDelete] = useState(null);
-
+  const [viewMode, setViewMode] = useState('pipeline'); // 'pipeline' or 'list'
   useEffect(() => {
     loadData();
   }, []);
@@ -162,6 +164,11 @@ const handleEditDeal = (deal) => {
   if (loading) return <Loading />;
   if (error) return <ErrorView message={error} onRetry={loadData} />;
 
+// Render list view if selected
+  if (viewMode === 'list') {
+    return <DealList />;
+  }
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -178,6 +185,31 @@ const handleEditDeal = (deal) => {
           </div>
           
           <div className="flex items-center gap-4">
+            {/* View Toggle */}
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('pipeline')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === 'pipeline'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <ApperIcon name="BarChart3" size={16} className="mr-2" />
+                Pipeline
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <ApperIcon name="List" size={16} className="mr-2" />
+                List
+              </button>
+            </div>
             <div className="text-right">
               <div className="text-sm text-gray-500">Total Pipeline Value</div>
               <div className="text-2xl font-bold text-green-600">

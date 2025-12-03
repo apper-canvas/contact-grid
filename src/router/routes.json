@@ -25,12 +25,25 @@
       "redirectOnDeny": "/login"
     }
   },
-  "/deals": {
+"/deals": {
     "allow": {
       "when": {
         "conditions": [
           {
             "label": "User must be authenticated to view deals",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/deals/list": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to view deals list",
             "rule": "authenticated"
           }
         ]
