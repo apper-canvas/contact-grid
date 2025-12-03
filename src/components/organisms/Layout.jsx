@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { cn } from "@/utils/cn";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
+import { cn } from "@/utils/cn";
+import { useAuth } from "@/layouts/Root";
 
 function Layout() {
 const location = useLocation()
@@ -76,23 +76,27 @@ const handleAddContact = () => {
     setShowContactForm(true);
   };
 
-  const handleDeleteContact = (contact) => {
+const handleDeleteContact = (contact) => {
     setContactToDelete(contact);
     setShowDeleteDialog(true);
   };
 
-  const handleFormSubmit = async (formData) => {
+  const handleFormSubmit = async (contactData) => {
     setLoading(true);
     
     try {
-if (editingContact) {
-        const updatedContact = await updateContact(editingContact.id, formData);
-        if (updatedContact) {
-          setSelectedContact(updatedContact);
+      let result;
+      if (editingContact) {
+        result = await updateContact(editingContact.id, contactData);
+        if (result.success && result.data) {
+          if (selectedContact?.id === editingContact.id) {
+            setSelectedContact(result.data);
+          }
           toast.success("Contact updated successfully!");
         }
       } else {
-        const newContact = await createContact(formData);
+        result = await createContact(contactData);
+        const newContact = result?.data;
         if (newContact) {
           setSelectedContact(newContact);
           toast.success("Contact added successfully!");

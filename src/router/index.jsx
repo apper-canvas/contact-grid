@@ -9,6 +9,7 @@ const ContactManagement = lazy(() => import('@/components/pages/ContactManagemen
 const DealPipeline = lazy(() => import('@/components/pages/DealPipeline'));
 const CompanyManagement = lazy(() => import('@/components/pages/CompanyManagement'));
 const TaskManagement = lazy(() => import('@/components/pages/TaskManagement'));
+const LeadManagement = lazy(() => import('@/components/pages/LeadManagement'));
 const NotFound = lazy(() => import('@/components/pages/NotFound'));
 const Login = lazy(() => import('@/components/pages/Login'));
 const Signup = lazy(() => import('@/components/pages/Signup'));
@@ -61,6 +62,10 @@ const appRoutes = [
 createRoute({
     path: "contacts",
     element: <ContactManagement />
+  }),
+createRoute({
+    path: "leads",
+    element: <LeadManagement />
   }),
 createRoute({
     path: "deals",
