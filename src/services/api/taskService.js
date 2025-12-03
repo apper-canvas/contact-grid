@@ -234,10 +234,9 @@ export async function getAllTaskStatuses() {
     const response = await apperClient.fetchRecords('task_status_c', {
       fields: [
         {"field": {"Name": "Id"}},
-        {"field": {"Name": "Name"}},
         {"field": {"Name": "name_c"}}
       ],
-      orderBy: [{"fieldName": "Name", "sorttype": "ASC"}]
+      orderBy: [{"fieldName": "name_c", "sorttype": "ASC"}]
     });
 
     if (!response.success) {
@@ -259,10 +258,9 @@ export async function getAllTaskPriorities() {
     const response = await apperClient.fetchRecords('task_priority_c', {
       fields: [
         {"field": {"Name": "Id"}},
-        {"field": {"Name": "Name"}},
         {"field": {"Name": "name_c"}}
       ],
-      orderBy: [{"fieldName": "Name", "sorttype": "ASC"}]
+      orderBy: [{"fieldName": "name_c", "sorttype": "ASC"}]
     });
 
     if (!response.success) {
