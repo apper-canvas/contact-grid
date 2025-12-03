@@ -112,7 +112,6 @@ export const createDeal = async (dealData) => {
     return null;
   }
 };
-
 export const updateDeal = async (dealId, dealData) => {
   try {
     const apperClient = getApperClient();
@@ -165,4 +164,39 @@ export const updateDeal = async (dealId, dealData) => {
     toast.error("Failed to update deal");
     return null;
 }
+};
+
+export const deleteDeal = async (dealId) => {
+  try {
+    const apperClient = getApperClient();
+    
+    const response = await apperClient.deleteRecord('deal_c', {
+      RecordIds: [parseInt(dealId)]
+    });
+
+    if (!response.success) {
+      console.error(response.message);
+      toast.error(response.message);
+      return false;
+    }
+
+    if (response.results) {
+      const successful = response.results.filter(r => r.success);
+      const failed = response.results.filter(r => !r.success);
+      
+      if (failed.length > 0) {
+        console.error(`Failed to delete ${failed.length} deals:`, failed);
+        failed.forEach(record => {
+          if (record.message) toast.error(record.message);
+        });
+      }
+      return successful.length > 0;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting deal:", error?.response?.data?.message || error);
+    toast.error("Failed to delete deal");
+    return false;
+  }
 };
