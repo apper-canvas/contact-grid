@@ -21,19 +21,33 @@
             "rule": "authenticated"
           }
         ]
-      },
-      "redirectOnDeny": "/login"
-    }
+      }
+}
   },
-  "/deals": {
+  "/tasks": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "User must be authenticated to view deals",
+            "label": "User must be logged in to view tasks",
             "rule": "authenticated"
           }
         ]
+      },
+      "redirectOnDeny": "/login",
+      "excludeRedirectQuery": false
+    }
+  },
+  "/leads": {
+    "allow": {
+      "when": {
+        "conditions": [
+        "conditions",":", [
+          {
+            "label": "User must be authenticated to view deals",
+            "rule": "authenticated"
+          }
+        ]]
       },
       "redirectOnDeny": "/login"
     }

@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { cn } from "@/utils/cn";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
+import { cn } from "@/utils/cn";
+import { useAuth } from "@/layouts/Root";
 
 function Layout() {
 const location = useLocation()
@@ -155,6 +155,7 @@ if (editingContact) {
       setBulkDeleteClearSelection(null);
     }
   };
+};
 
   // Cancel bulk delete
   const cancelBulkDelete = () => {
@@ -163,11 +164,11 @@ if (editingContact) {
     setBulkDeleteClearSelection(null);
   };
 
-const confirmDelete = async () => {
+  // Confirm single contact delete
+  const confirmDelete = async () => {
     if (!contactToDelete) return;
-
-    setLoading(true);
     
+    setLoading(true);
     try {
       const result = await deleteContact(contactToDelete.id);
       
@@ -187,8 +188,9 @@ const confirmDelete = async () => {
       setLoading(false);
     }
   };
+
   const cancelDelete = () => {
-setShowDeleteDialog(false);
+    setShowDeleteDialog(false);
     setContactToDelete(null);
   };
 
