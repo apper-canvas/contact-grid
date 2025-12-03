@@ -63,6 +63,19 @@
       },
       "redirectOnDeny": "/login"
     }
+},
+  "/leads": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to view leads",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
   },
   "/login": {
     "allow": {

@@ -67,7 +67,7 @@ const handleAddContact = () => {
     // The actual implementation is in the DealPipeline component
   };
 
-  const handleAddTask = () => {
+const handleAddTask = () => {
     // This will be handled by task management components
   };
 
@@ -76,7 +76,7 @@ const handleAddContact = () => {
     setShowContactForm(true);
   };
 
-const handleDeleteContact = (contact) => {
+  const handleDeleteContact = (contact) => {
     setContactToDelete(contact);
     setShowDeleteDialog(true);
   };
