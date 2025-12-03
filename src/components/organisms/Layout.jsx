@@ -154,7 +154,6 @@ if (editingContact) {
       setContactsToDelete([]);
       setBulkDeleteClearSelection(null);
     }
-  };
 };
 
   // Cancel bulk delete
