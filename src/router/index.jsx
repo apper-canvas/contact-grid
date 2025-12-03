@@ -1,6 +1,6 @@
-import { createBrowserRouter } from "react-router-dom";
-import React, { Suspense, lazy } from "react";
-import { getRouteConfig } from "@/router/route.utils";
+import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { getRouteConfig } from './route.utils';
 
 // Lazy load components
 const Root = lazy(() => import('@/layouts/Root'));
@@ -17,7 +17,7 @@ const Callback = lazy(() => import('@/components/pages/Callback'));
 const ErrorPage = lazy(() => import('@/components/pages/ErrorPage'));
 const ResetPassword = lazy(() => import('@/components/pages/ResetPassword'));
 const PromptPassword = lazy(() => import('@/components/pages/PromptPassword'));
-
+// createRoute Helper Function
 const createRoute = ({
   path,
   index,
@@ -37,7 +37,7 @@ const createRoute = ({
   const config = getRouteConfig(configPath);
   const finalAccess = access || config?.allow;
 
-  const route = {
+const route = {
     ...(index ? { index: true } : { path }),
     element: element ? <Suspense fallback={<div className="nav-loading"></div>}><div className="page-transition">{element}</div></Suspense> : element,
     handle: {
@@ -59,28 +59,29 @@ const appRoutes = [
     index: true,
     element: <ContactManagement />
   }),
-  createRoute({
+createRoute({
     path: "contacts",
     element: <ContactManagement />
   }),
-  createRoute({
+createRoute({
     path: "deals",
     element: <DealPipeline />
   }),
-  createRoute({
+createRoute({
     path: "companies",
-    element: <CompanyManagement />,
-    title: 'Company Management'
+    element: <CompanyManagement />
+  }),
+createRoute({
+    path: "tasks",
+    element: <TaskManagement />
   }),
   createRoute({
-    path: 'tasks',
-    element: <TaskManagement />,
-    title: 'Task Management'
+    path: "leads",
+    element: <LeadManagement />
   }),
   createRoute({
-    path: 'leads',
-    element: <LeadManagement />,
-    title: 'Lead Management'
+    path: "*",
+    element: <NotFound />
   })
 ];
 

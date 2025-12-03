@@ -1,91 +1,111 @@
-import React, { useEffect, useState } from "react";
-import { getAllCompanies } from "@/services/api/companyService";
-import { getAllContacts } from "@/services/api/contactService";
-import ApperIcon from "@/components/ApperIcon";
-import Textarea from "@/components/atoms/Textarea";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
+import React, { useState, useEffect } from 'react';
+import Button from '@/components/atoms/Button';
+import Input from '@/components/atoms/Input';
+import Textarea from '@/components/atoms/Textarea';
+import ApperIcon from '@/components/ApperIcon';
+import { getAllTaskStatuses, getAllTaskPriorities } from '@/services/api/taskService';
+import { getAllDeals } from '@/services/api/dealService';
+import { getAllContacts } from '@/services/api/contactService';
 
-const TaskForm = ({ task, onSubmit, onCancel }) => {
+function TaskForm({ initialData = null, onSubmit, onCancel, isLoading = false }) {
   const [formData, setFormData] = useState({
-    title_c: '',
+    Name: '',
     description_c: '',
     due_date_c: '',
-    status_c: '1', // Not Started
-    priority_c: '2', // Medium
+    deal_c: '',
     contact_c: '',
-    company_c: '',
-    assigned_to_c: ''
+    status_c: '',
+    priority_c: ''
   });
 
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [statuses, setStatuses] = useState([]);
+  const [priorities, setPriorities] = useState([]);
+  const [deals, setDeals] = useState([]);
   const [contacts, setContacts] = useState([]);
-  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    loadContactsAndCompanies();
+    loadLookupData();
   }, []);
 
   useEffect(() => {
-    if (task) {
+    if (initialData) {
       setFormData({
-        title_c: task.title_c || '',
-        description_c: task.description_c || '',
-        due_date_c: task.due_date_c ? task.due_date_c.split('T')[0] : '',
-        status_c: (task.status_c?.Id || task.status_c || '1').toString(),
-        priority_c: (task.priority_c?.Id || task.priority_c || '2').toString(),
-        contact_c: (task.contact_c?.Id || task.contact_c || '').toString(),
-        company_c: (task.company_c?.Id || task.company_c || '').toString(),
-        assigned_to_c: task.assigned_to_c || ''
+        Name: initialData.Name || '',
+        description_c: initialData.description_c || '',
+        due_date_c: initialData.due_date_c ? formatDateForInput(initialData.due_date_c) : '',
+        deal_c: initialData.deal_c?.Id || initialData.deal_c || '',
+        contact_c: initialData.contact_c?.Id || initialData.contact_c || '',
+        status_c: initialData.status_c?.Id || initialData.status_c || '',
+        priority_c: initialData.priority_c?.Id || initialData.priority_c || ''
       });
     }
-  }, [task]);
+  }, [initialData]);
 
-const loadContactsAndCompanies = async () => {
+  async function loadLookupData() {
     try {
-      const [contactData, companyData] = await Promise.all([
-        getAllContacts(),
-        getAllCompanies()
+      setLoading(true);
+      const [statusData, priorityData, dealData, contactData] = await Promise.all([
+        getAllTaskStatuses(),
+        getAllTaskPriorities(),
+        getAllDeals(),
+        getAllContacts()
       ]);
-      setContacts(contactData || []);
-      setCompanies(companyData || []);
+
+      setStatuses(statusData);
+      setPriorities(priorityData);
+      setDeals(dealData);
+      setContacts(contactData);
     } catch (error) {
-      console.error('Error loading contacts and companies:', error);
+      console.error('Error loading lookup data:', error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
+  function formatDateForInput(dateString) {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().slice(0, 16); // Format for datetime-local input
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function formatDateForSubmission(dateString) {
+    if (!dateString) return '';
+    try {
+      return new Date(dateString).toISOString();
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function handleChange(field) {
+    return (e) => {
+      const value = e.target.value;
+      setFormData(prev => ({
         ...prev,
-        [name]: ''
+        [field]: value
       }));
-    }
-  };
+      
+      // Clear error when user starts typing
+      if (errors[field]) {
+        setErrors(prev => ({
+          ...prev,
+          [field]: ''
+        }));
+      }
+    };
+  }
 
-  const validateForm = () => {
+  function validateForm() {
     const newErrors = {};
 
-    if (!formData.title_c?.trim()) {
-      newErrors.title_c = 'Title is required';
-    }
-
-    if (!formData.due_date_c) {
-      newErrors.due_date_c = 'Due date is required';
-    } else {
-      const dueDate = new Date(formData.due_date_c);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (dueDate < today) {
-        newErrors.due_date_c = 'Due date cannot be in the past';
-      }
+    if (!formData.Name?.trim()) {
+      newErrors.Name = 'Task name is required';
     }
 
     if (!formData.status_c) {
@@ -96,243 +116,212 @@ const loadContactsAndCompanies = async () => {
       newErrors.priority_c = 'Priority is required';
     }
 
+    if (formData.due_date_c) {
+      const dueDate = new Date(formData.due_date_c);
+      if (isNaN(dueDate.getTime())) {
+        newErrors.due_date_c = 'Invalid due date';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }
 
-  const handleSubmit = async (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
     
     if (!validateForm()) {
       return;
     }
 
-    setLoading(true);
-    try {
-      const submitData = {
-        ...formData,
-        due_date_c: formData.due_date_c ? new Date(formData.due_date_c).toISOString() : null,
-        contact_c: formData.contact_c ? parseInt(formData.contact_c) : null,
-        company_c: formData.company_c ? parseInt(formData.company_c) : null
-      };
-      
-      await onSubmit(submitData);
-    } catch (error) {
-      console.error('Error submitting task:', error);
-      setErrors({ submit: 'Failed to save task. Please try again.' });
-    } finally {
-      setLoading(false);
-    }
-  };
+    const submissionData = {
+      ...formData,
+      due_date_c: formData.due_date_c ? formatDateForSubmission(formData.due_date_c) : ''
+    };
 
-  const statusOptions = [
-    { value: '1', label: 'Not Started' },
-    { value: '2', label: 'In Progress' },
-    { value: '3', label: 'Completed' },
-    { value: '4', label: 'On Hold' },
-    { value: '5', label: 'Cancelled' }
-  ];
+    onSubmit(submissionData);
+  }
 
-  const priorityOptions = [
-    { value: '1', label: 'Low' },
-    { value: '2', label: 'Medium' },
-    { value: '3', label: 'High' },
-    { value: '4', label: 'Critical' }
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <ApperIcon name="Loader2" size={24} className="animate-spin text-primary" />
+        <span className="ml-2 text-secondary">Loading form data...</span>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {errors.submit && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">{errors.submit}</p>
-        </div>
-      )}
-
-      {/* Title */}
+      {/* Task Name */}
       <div>
-        <label htmlFor="title_c" className="block text-sm font-medium text-gray-700 mb-2">
-          Task Title *
+        <label htmlFor="taskName" className="block text-sm font-medium text-gray-700 mb-2">
+          Task Name *
         </label>
         <Input
-          id="title_c"
-          name="title_c"
+          id="taskName"
           type="text"
-          value={formData.title_c}
-          onChange={handleInputChange}
-          placeholder="Enter task title"
-          error={errors.title_c}
+          value={formData.Name}
+          onChange={handleChange('Name')}
+          placeholder="Enter task name"
+          error={errors.Name}
+          disabled={isLoading}
         />
+        {errors.Name && (
+          <p className="mt-1 text-sm text-error">{errors.Name}</p>
+        )}
       </div>
 
       {/* Description */}
       <div>
-        <label htmlFor="description_c" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
           Description
         </label>
         <Textarea
-          id="description_c"
-          name="description_c"
+          id="description"
           value={formData.description_c}
-          onChange={handleInputChange}
+          onChange={handleChange('description_c')}
           placeholder="Enter task description"
-          rows={3}
+          rows={4}
+          disabled={isLoading}
         />
       </div>
 
       {/* Due Date */}
       <div>
-        <label htmlFor="due_date_c" className="block text-sm font-medium text-gray-700 mb-2">
-          Due Date *
+        <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-2">
+          Due Date
         </label>
         <Input
-          id="due_date_c"
-          name="due_date_c"
-          type="date"
+          id="dueDate"
+          type="datetime-local"
           value={formData.due_date_c}
-          onChange={handleInputChange}
+          onChange={handleChange('due_date_c')}
           error={errors.due_date_c}
+          disabled={isLoading}
         />
+        {errors.due_date_c && (
+          <p className="mt-1 text-sm text-error">{errors.due_date_c}</p>
+        )}
       </div>
 
-      {/* Status and Priority Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Status */}
-        <div>
-          <label htmlFor="status_c" className="block text-sm font-medium text-gray-700 mb-2">
-            Status *
-          </label>
-          <select
-            id="status_c"
-            name="status_c"
-            value={formData.status_c}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            {statusOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {errors.status_c && (
-            <p className="text-red-500 text-sm mt-1">{errors.status_c}</p>
-          )}
-        </div>
-
-        {/* Priority */}
-        <div>
-          <label htmlFor="priority_c" className="block text-sm font-medium text-gray-700 mb-2">
-            Priority *
-          </label>
-          <select
-            id="priority_c"
-            name="priority_c"
-            value={formData.priority_c}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            {priorityOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {errors.priority_c && (
-            <p className="text-red-500 text-sm mt-1">{errors.priority_c}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Contact and Company Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Contact */}
-        <div>
-          <label htmlFor="contact_c" className="block text-sm font-medium text-gray-700 mb-2">
-            Related Contact
-          </label>
-          <select
-            id="contact_c"
-            name="contact_c"
-            value={formData.contact_c}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="">Select Contact (Optional)</option>
-            {contacts.map(contact => (
-              <option key={contact.Id} value={contact.Id}>
-                {contact.first_name_c} {contact.last_name_c} - {contact.email_c}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Company */}
-        <div>
-          <label htmlFor="company_c" className="block text-sm font-medium text-gray-700 mb-2">
-            Related Company
-          </label>
-          <select
-            id="company_c"
-            name="company_c"
-            value={formData.company_c}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-          >
-            <option value="">Select Company (Optional)</option>
-            {companies.map(company => (
-              <option key={company.Id} value={company.Id}>
-                {company.name_c}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Assigned To */}
+      {/* Status */}
       <div>
-        <label htmlFor="assigned_to_c" className="block text-sm font-medium text-gray-700 mb-2">
-          Assigned To
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+          Status *
         </label>
-        <Input
-          id="assigned_to_c"
-          name="assigned_to_c"
-          type="email"
-          value={formData.assigned_to_c}
-          onChange={handleInputChange}
-          placeholder="Enter email address"
-        />
+        <select
+          id="status"
+          value={formData.status_c}
+          onChange={handleChange('status_c')}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          disabled={isLoading}
+        >
+          <option value="">Select status</option>
+          {statuses.map(status => (
+            <option key={status.Id} value={status.Id}>
+              {status.name_c || status.Name}
+            </option>
+          ))}
+        </select>
+        {errors.status_c && (
+          <p className="mt-1 text-sm text-error">{errors.status_c}</p>
+        )}
+      </div>
+
+      {/* Priority */}
+      <div>
+        <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
+          Priority *
+        </label>
+        <select
+          id="priority"
+          value={formData.priority_c}
+          onChange={handleChange('priority_c')}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          disabled={isLoading}
+        >
+          <option value="">Select priority</option>
+          {priorities.map(priority => (
+            <option key={priority.Id} value={priority.Id}>
+              {priority.name_c || priority.Name}
+            </option>
+          ))}
+        </select>
+        {errors.priority_c && (
+          <p className="mt-1 text-sm text-error">{errors.priority_c}</p>
+        )}
+      </div>
+
+      {/* Deal */}
+      <div>
+        <label htmlFor="deal" className="block text-sm font-medium text-gray-700 mb-2">
+          Related Deal
+        </label>
+        <select
+          id="deal"
+          value={formData.deal_c}
+          onChange={handleChange('deal_c')}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          disabled={isLoading}
+        >
+          <option value="">Select deal</option>
+          {deals.map(deal => (
+            <option key={deal.Id} value={deal.Id}>
+              {deal.Name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Contact */}
+      <div>
+        <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-2">
+          Related Contact
+        </label>
+        <select
+          id="contact"
+          value={formData.contact_c}
+          onChange={handleChange('contact_c')}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          disabled={isLoading}
+        >
+          <option value="">Select contact</option>
+          {contacts.map(contact => (
+            <option key={contact.Id} value={contact.Id}>
+              {contact.name_c || contact.Name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Form Actions */}
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={loading}
-        >
-          Cancel
-        </Button>
+      <div className="flex items-center gap-3 pt-4 border-t">
         <Button
           type="submit"
-          disabled={loading}
-          className="bg-primary hover:bg-primary/90"
+          variant="primary"
+          disabled={isLoading}
+          className="flex-1"
         >
-          {loading ? (
-            <>
-              <ApperIcon name="Loader2" size={16} className="mr-2 animate-spin" />
-              {task ? 'Updating...' : 'Creating...'}
-            </>
+          {isLoading ? (
+            <ApperIcon name="Loader2" size={16} className="animate-spin mr-2" />
           ) : (
-            <>
-              <ApperIcon name={task ? "Save" : "Plus"} size={16} className="mr-2" />
-              {task ? 'Update Task' : 'Create Task'}
-            </>
+            <ApperIcon name="Check" size={16} className="mr-2" />
           )}
+          {initialData ? 'Update Task' : 'Create Task'}
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onCancel}
+          disabled={isLoading}
+        >
+          <ApperIcon name="X" size={16} className="mr-2" />
+          Cancel
         </Button>
       </div>
     </form>
   );
-};
+}
 
 export default TaskForm;
