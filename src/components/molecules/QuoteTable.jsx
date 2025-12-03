@@ -120,12 +120,12 @@ const QuoteTable = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+<td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    {quote.customer_name_c}
+                    {quote.contact_c?.Name || 'N/A'}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {quote.customer_email_c}
+                    {quote.company_c?.Name || 'N/A'}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

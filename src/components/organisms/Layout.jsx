@@ -156,6 +156,10 @@ const handleAddDeal = () => {
   const handleAddTask = () => {
     // This will be handled by task management components
   };
+
+  const handleAddQuote = () => {
+    // This will be handled by quote management components
+  };
 // Confirm bulk delete
   const confirmBulkDelete = async () => {
     if (contactsToDelete.length === 0) return;
@@ -346,9 +350,9 @@ const outletContext = {
 <ApperIcon name="Plus" size={18} />
                   <span>Add Task</span>
                 </button>
-              ) : location.pathname === '/quotes' ? (
+) : location.pathname === '/quotes' ? (
                 <button
-                  onClick={handleAddContact}
+                  onClick={handleAddQuote}
                   className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 >
                   <ApperIcon name="Plus" size={18} />

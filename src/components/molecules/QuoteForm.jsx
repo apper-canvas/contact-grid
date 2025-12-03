@@ -10,16 +10,16 @@ const QuoteForm = ({
   onCancel, 
   loading = false 
 }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     Name: "",
-    customer_name_c: "",
-    customer_email_c: "",
+    title_c: "",
+    description_c: "",
     amount_c: "",
     status_c: "Draft",
     valid_until_c: "",
-    description_c: "",
-    items_c: "",
-    notes_c: ""
+    quote_date_c: "",
+    contact_c: "",
+    company_c: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -31,20 +31,27 @@ const QuoteForm = ({
     { value: "Rejected", label: "Rejected", color: "bg-red-100 text-red-800" }
   ];
 
-  useEffect(() => {
+useEffect(() => {
     if (initialData) {
       setFormData({
         Name: initialData.Name || "",
-        customer_name_c: initialData.customer_name_c || "",
-        customer_email_c: initialData.customer_email_c || "",
+        title_c: initialData.title_c || initialData.Name || "",
+        description_c: initialData.description_c || "",
         amount_c: initialData.amount_c || "",
         status_c: initialData.status_c || "Draft",
         valid_until_c: initialData.valid_until_c ? 
           new Date(initialData.valid_until_c).toISOString().split('T')[0] : "",
-        description_c: initialData.description_c || "",
-        items_c: initialData.items_c || "",
-        notes_c: initialData.notes_c || ""
+        quote_date_c: initialData.quote_date_c ? 
+          new Date(initialData.quote_date_c).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        contact_c: initialData.contact_c?.Id || initialData.contact_c || "",
+        company_c: initialData.company_c?.Id || initialData.company_c || ""
       });
+    } else {
+      // Set default quote_date_c for new quotes
+      setFormData(prev => ({
+        ...prev,
+        quote_date_c: new Date().toISOString().split('T')[0]
+      }));
     }
   }, [initialData]);
 
@@ -58,21 +65,11 @@ const QuoteForm = ({
     }
   };
 
-  const validateForm = () => {
+const validateForm = () => {
     const newErrors = {};
 
     if (!formData.Name.trim()) {
       newErrors.Name = "Quote name is required";
-    }
-
-    if (!formData.customer_name_c.trim()) {
-      newErrors.customer_name_c = "Customer name is required";
-    }
-
-    if (!formData.customer_email_c.trim()) {
-      newErrors.customer_email_c = "Customer email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.customer_email_c)) {
-      newErrors.customer_email_c = "Please enter a valid email address";
     }
 
     if (!formData.amount_c || formData.amount_c <= 0) {
@@ -101,18 +98,18 @@ const QuoteForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (validateForm()) {
+if (validateForm()) {
       // Format data for submission
       const submitData = {
         Name: formData.Name.trim(),
-        customer_name_c: formData.customer_name_c.trim(),
-        customer_email_c: formData.customer_email_c.trim(),
+        title_c: formData.title_c.trim() || formData.Name.trim(),
+        description_c: formData.description_c.trim(),
         amount_c: parseFloat(formData.amount_c) || 0,
         status_c: formData.status_c,
         valid_until_c: formData.valid_until_c,
-        description_c: formData.description_c.trim(),
-        items_c: formData.items_c.trim(),
-        notes_c: formData.notes_c.trim()
+        quote_date_c: formData.quote_date_c,
+        contact_c: formData.contact_c ? parseInt(formData.contact_c) : null,
+        company_c: formData.company_c ? parseInt(formData.company_c) : null
       };
       onSubmit(submitData);
     }
@@ -136,38 +133,19 @@ const QuoteForm = ({
         )}
       </div>
 
-      {/* Customer Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Customer Name *
-          </label>
-          <Input
-            value={formData.customer_name_c}
-            onChange={handleChange("customer_name_c")}
-            placeholder="Enter customer name"
-            error={errors.customer_name_c}
-          />
-          {errors.customer_name_c && (
-            <p className="text-error text-sm mt-1">{errors.customer_name_c}</p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Customer Email *
-          </label>
-          <Input
-            type="email"
-            value={formData.customer_email_c}
-            onChange={handleChange("customer_email_c")}
-            placeholder="customer@example.com"
-            error={errors.customer_email_c}
-          />
-          {errors.customer_email_c && (
-            <p className="text-error text-sm mt-1">{errors.customer_email_c}</p>
-          )}
-        </div>
+{/* Title */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Title
+        </label>
+        <Input
+          value={formData.title_c}
+          onChange={handleChange("title_c")}
+          placeholder="Enter quote title (optional)"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Optional: If empty, will use quote name
+        </p>
       </div>
 
       {/* Amount and Status */}
@@ -208,20 +186,66 @@ const QuoteForm = ({
         </div>
       </div>
 
-      {/* Valid Until Date */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Valid Until *
-        </label>
-        <Input
-          type="date"
-          value={formData.valid_until_c}
-          onChange={handleChange("valid_until_c")}
-          error={errors.valid_until_c}
-        />
-        {errors.valid_until_c && (
-          <p className="text-error text-sm mt-1">{errors.valid_until_c}</p>
-        )}
+      {/* Dates */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Quote Date
+          </label>
+          <Input
+            type="date"
+            value={formData.quote_date_c}
+            onChange={handleChange("quote_date_c")}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Valid Until *
+          </label>
+          <Input
+            type="date"
+            value={formData.valid_until_c}
+            onChange={handleChange("valid_until_c")}
+            error={errors.valid_until_c}
+          />
+          {errors.valid_until_c && (
+            <p className="text-error text-sm mt-1">{errors.valid_until_c}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Customer References */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Contact ID
+          </label>
+          <Input
+            type="number"
+            value={formData.contact_c}
+            onChange={handleChange("contact_c")}
+            placeholder="Enter contact ID"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Optional: ID of related contact
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Company ID
+          </label>
+          <Input
+            type="number"
+            value={formData.company_c}
+            onChange={handleChange("company_c")}
+            placeholder="Enter company ID"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Optional: ID of related company
+          </p>
+        </div>
       </div>
 
       {/* Description */}
@@ -233,44 +257,12 @@ const QuoteForm = ({
           value={formData.description_c}
           onChange={handleChange("description_c")}
           placeholder="Describe the quote details..."
-          rows={3}
+          rows={4}
           error={errors.description_c}
         />
         {errors.description_c && (
           <p className="text-error text-sm mt-1">{errors.description_c}</p>
         )}
-      </div>
-
-      {/* Items/Services */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Items/Services
-        </label>
-        <Textarea
-          value={formData.items_c}
-          onChange={handleChange("items_c")}
-          placeholder="List items or services included..."
-          rows={3}
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Optional: List the items or services included in this quote
-        </p>
-      </div>
-
-      {/* Notes */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Internal Notes
-        </label>
-        <Textarea
-          value={formData.notes_c}
-          onChange={handleChange("notes_c")}
-          placeholder="Internal notes about this quote..."
-          rows={3}
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Optional: Internal notes for team reference
-        </p>
       </div>
 
       {/* Form Actions */}

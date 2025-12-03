@@ -58,7 +58,7 @@ const QuoteList = ({
     }
   };
 
-  const filterAndSortQuotes = () => {
+const filterAndSortQuotes = () => {
     let filtered = [...quotes];
 
     // Apply status filter
@@ -71,9 +71,10 @@ const QuoteList = ({
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(quote =>
         quote.Name?.toLowerCase().includes(term) ||
-        quote.customer_name_c?.toLowerCase().includes(term) ||
-        quote.customer_email_c?.toLowerCase().includes(term) ||
-        quote.description_c?.toLowerCase().includes(term)
+        quote.title_c?.toLowerCase().includes(term) ||
+        quote.description_c?.toLowerCase().includes(term) ||
+        quote.contact_c?.Name?.toLowerCase().includes(term) ||
+        quote.company_c?.Name?.toLowerCase().includes(term)
       );
     }
 
@@ -86,7 +87,7 @@ const QuoteList = ({
       if (sortField === "amount_c") {
         aValue = parseFloat(aValue) || 0;
         bValue = parseFloat(bValue) || 0;
-      } else if (sortField.includes("date") || sortField.includes("_at_")) {
+      } else if (sortField.includes("date") || sortField.includes("On")) {
         aValue = new Date(aValue || 0);
         bValue = new Date(bValue || 0);
       } else {
@@ -207,10 +208,10 @@ const QuoteList = ({
               setSortField(field);
               setSortDirection(direction);
             }}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
           >
-            <option value="updated_at_c-desc">Latest Updated</option>
-            <option value="created_at_c-desc">Latest Created</option>
+            <option value="ModifiedOn-desc">Latest Updated</option>
+            <option value="CreatedOn-desc">Latest Created</option>
             <option value="Name-asc">Name A-Z</option>
             <option value="Name-desc">Name Z-A</option>
             <option value="amount_c-desc">Amount High-Low</option>

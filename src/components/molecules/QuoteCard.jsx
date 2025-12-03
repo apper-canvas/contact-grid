@@ -90,16 +90,20 @@ const QuoteCard = ({
           </div>
         </div>
 
-        {/* Customer Info */}
+{/* Customer Info */}
         <div className="mb-4">
-          <div className="flex items-center text-sm text-gray-600 mb-1">
-            <ApperIcon name="User" size={14} className="mr-2 text-gray-400" />
-            <span className="font-medium">{quote.customer_name_c}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <ApperIcon name="Mail" size={14} className="mr-2 text-gray-400" />
-            <span>{quote.customer_email_c}</span>
-          </div>
+          {quote.contact_c && (
+            <div className="flex items-center text-sm text-gray-600 mb-1">
+              <ApperIcon name="User" size={14} className="mr-2 text-gray-400" />
+              <span className="font-medium">{quote.contact_c.Name}</span>
+            </div>
+          )}
+          {quote.company_c && (
+            <div className="flex items-center text-sm text-gray-500">
+              <ApperIcon name="Building2" size={14} className="mr-2 text-gray-400" />
+              <span>{quote.company_c.Name}</span>
+            </div>
+          )}
         </div>
 
         {/* Amount and Date */}

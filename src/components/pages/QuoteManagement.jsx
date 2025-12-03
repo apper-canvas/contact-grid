@@ -208,7 +208,7 @@ function QuoteManagement() {
         onClose={closeViewModal}
         title="Quote Details"
       >
-        {selectedQuote && (
+{selectedQuote && (
           <div className="space-y-6">
             {/* Quote Header */}
             <div className="flex items-start justify-between">
@@ -229,19 +229,18 @@ function QuoteManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                    Customer Name
+                    Contact
                   </label>
-                  <p className="text-sm text-gray-900">{selectedQuote.customer_name_c}</p>
+                  <p className="text-sm text-gray-900">{selectedQuote.contact_c?.Name || 'N/A'}</p>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
-                    Email
+                    Company
                   </label>
-                  <p className="text-sm text-gray-900">{selectedQuote.customer_email_c}</p>
+                  <p className="text-sm text-gray-900">{selectedQuote.company_c?.Name || 'N/A'}</p>
                 </div>
               </div>
             </div>
-
             {/* Quote Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
