@@ -68,10 +68,6 @@ createRoute({
 path: "deals",
     element: <DealPipeline />
   }),
-  createRoute({
-    path: "deals/list",
-    element: <DealList />
-  }),
 createRoute({
     path: "companies",
     element: <CompanyManagement />

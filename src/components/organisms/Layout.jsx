@@ -28,7 +28,7 @@ const location = useLocation()
 const navigation = [
     { name: 'Contacts', href: '/', icon: 'Users' },
     { name: 'Leads', href: '/leads', icon: 'UserPlus' },
-    { name: 'Tasks', href: '/tasks', icon: 'CheckSquare' },
+{ name: 'Tasks', href: '/tasks', icon: 'CheckSquare' },
     { name: 'Deals', href: '/deals', icon: 'TrendingUp' },
     { name: 'Companies', href: '/companies', icon: 'Building2' }
   ]

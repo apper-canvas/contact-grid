@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { createDeal, deleteDeal, getAllDeals, updateDeal } from "@/services/api/dealService";
 import { getAllStages } from "@/services/api/dealStageService";
+import { getAllContacts } from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import Modal from "@/components/atoms/Modal";
@@ -13,8 +14,9 @@ import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
 
 function DealPipeline() {
-const [deals, setDeals] = useState([]);
+  const [deals, setDeals] = useState([]);
   const [stages, setStages] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDeal, setSelectedDeal] = useState(null);
@@ -32,14 +34,16 @@ const loadData = async () => {
     setLoading(true);
     setError(null);
     
-    try {
-      const [dealsData, stagesData] = await Promise.all([
+try {
+      const [dealsData, stagesData, contactsData] = await Promise.all([
         getAllDeals(),
-        getAllStages()
+        getAllStages(),
+        getAllContacts()
       ]);
       
       setDeals(dealsData);
       setStages(stagesData);
+      setContacts(contactsData);
     } catch (err) {
       console.error("Error loading pipeline data:", err);
       setError("Failed to load pipeline data");
@@ -166,7 +170,15 @@ const handleEditDeal = (deal) => {
 
 // Render list view if selected
   if (viewMode === 'list') {
-    return <DealList />;
+    return (
+      <DealList 
+        dealsData={deals}
+        contactsData={contacts}
+        stagesData={stages}
+        onRefresh={loadData}
+        onViewModeChange={setViewMode}
+      />
+    );
   }
 
   return (
@@ -267,7 +279,7 @@ const handleEditDeal = (deal) => {
 
 
 {/* Create Deal Modal */}
-      <Modal
+<Modal
         isOpen={isCreatingDeal && !selectedDeal}
         onClose={cancelCreateDeal}
         title="Create New Deal"
@@ -275,11 +287,13 @@ const handleEditDeal = (deal) => {
         <DealForm
           onSubmit={handleCreateDeal}
           onCancel={cancelCreateDeal}
+          contacts={contacts}
+          stages={stages}
           loading={isCreatingDeal}
         />
       </Modal>
 
-      {/* Edit Deal Modal */}
+{/* Edit Deal Modal */}
       <Modal
         isOpen={isEditingDeal}
         onClose={cancelEditDeal}
@@ -289,6 +303,8 @@ const handleEditDeal = (deal) => {
           initialData={selectedDeal}
           onSubmit={handleUpdateDeal}
           onCancel={cancelEditDeal}
+          contacts={contacts}
+          stages={stages}
           loading={isCreatingDeal}
         />
       </Modal>

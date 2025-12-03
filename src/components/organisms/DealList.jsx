@@ -15,12 +15,12 @@ import DealForm from '@/components/molecules/DealForm';
 import SortFilter from '@/components/molecules/SortFilter';
 import { cn } from '@/utils/cn';
 
-function DealList() {
+function DealList({ dealsData, contactsData, stagesData, onRefresh, onViewModeChange }) {
   const [deals, setDeals] = useState([]);
   const [filteredDeals, setFilteredDeals] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [stages, setStages] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
   // Modal states
@@ -35,29 +35,42 @@ function DealList() {
   const [stageFilter, setStageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('CreatedOn');
   const [sortOrder, setSortOrder] = useState('desc');
-
   useEffect(() => {
-    loadData();
-  }, []);
+// Use provided data if available, otherwise load data
+    if (dealsData && contactsData && stagesData) {
+      setDeals(dealsData);
+      setContacts(contactsData);
+      setStages(stagesData);
+      setLoading(false);
+    } else {
+      loadData();
+    }
+  }, [dealsData, contactsData, stagesData]);
 
   useEffect(() => {
     filterAndSortDeals();
   }, [deals, searchTerm, stageFilter, sortBy, sortOrder]);
 
-  const loadData = async () => {
+const loadData = async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const [dealsData, contactsData, stagesData] = await Promise.all([
-        getAllDeals(),
-        getAllContacts(),
-        getAllStages()
-      ]);
-      
-      setDeals(dealsData);
-      setContacts(contactsData);
-      setStages(stagesData);
+      if (onRefresh) {
+        // If parent provides refresh function, use it
+        await onRefresh();
+      } else {
+        // Otherwise load data directly
+        const [dealsData, contactsData, stagesData] = await Promise.all([
+          getAllDeals(),
+          getAllContacts(),
+          getAllStages()
+        ]);
+        
+        setDeals(dealsData);
+        setContacts(contactsData);
+        setStages(stagesData);
+      }
     } catch (err) {
       console.error("Error loading deals data:", err);
       setError("Failed to load deals data");
@@ -149,9 +162,13 @@ function DealList() {
     }
   };
 
-  const handleFormSubmit = async (formData) => {
+const handleFormSubmit = async (formData) => {
     try {
-      await loadData();
+      if (onRefresh) {
+        await onRefresh();
+      } else {
+        await loadData();
+      }
       toast.success(isCreating ? 'Deal created successfully' : 'Deal updated successfully');
       setIsCreating(false);
       setIsEditing(false);
@@ -161,7 +178,6 @@ function DealList() {
       toast.error('Failed to save deal');
     }
   };
-
   const formatCurrency = (value) => {
     if (!value) return '$0';
     return new Intl.NumberFormat('en-US', {
@@ -210,7 +226,7 @@ function DealList() {
   if (loading) return <Loading />;
   if (error) return <ErrorView title="Error" message={error} onRetry={loadData} />;
 
-  return (
+return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
       <div className="flex-shrink-0 p-6 border-b border-gray-200">
@@ -225,10 +241,31 @@ function DealList() {
             </p>
           </div>
           
-          <Button onClick={handleCreate} className="bg-primary text-white hover:bg-primary/90">
-            <ApperIcon name="Plus" size={18} className="mr-2" />
-            Add Deal
-          </Button>
+          <div className="flex items-center gap-4">
+            {/* View Toggle - Show Pipeline Option */}
+            {onViewModeChange && (
+              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => onViewModeChange('pipeline')}
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-900"
+                >
+                  <ApperIcon name="BarChart3" size={16} className="mr-2" />
+                  Pipeline
+                </button>
+                <button
+                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors bg-white text-gray-900 shadow-sm"
+                >
+                  <ApperIcon name="List" size={16} className="mr-2" />
+                  List
+                </button>
+              </div>
+            )}
+            
+            <Button onClick={handleCreate} className="bg-primary text-white hover:bg-primary/90">
+              <ApperIcon name="Plus" size={18} className="mr-2" />
+              Add Deal
+            </Button>
+          </div>
         </div>
 
         {/* Filters and Search */}
