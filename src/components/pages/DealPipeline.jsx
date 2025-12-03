@@ -2,30 +2,26 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { createDeal, deleteDeal, getAllDeals, updateDeal } from "@/services/api/dealService";
 import { getAllStages } from "@/services/api/dealStageService";
-import { getAllContacts } from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import Modal from "@/components/atoms/Modal";
 import ConfirmDialog from "@/components/molecules/ConfirmDialog";
 import DealStage from "@/components/molecules/DealStage";
 import DealForm from "@/components/molecules/DealForm";
-import DealList from "@/components/organisms/DealList";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
-
 function DealPipeline() {
-  const [deals, setDeals] = useState([]);
+const [deals, setDeals] = useState([]);
   const [stages, setStages] = useState([]);
-  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDeal, setSelectedDeal] = useState(null);
+const [selectedDeal, setSelectedDeal] = useState(null);
   const [isEditingDeal, setIsEditingDeal] = useState(false);
   const [isCreatingDeal, setIsCreatingDeal] = useState(false);
   const [filteredStages, setFilteredStages] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [dealToDelete, setDealToDelete] = useState(null);
-  const [viewMode, setViewMode] = useState('pipeline'); // 'pipeline' or 'list'
+
   useEffect(() => {
     loadData();
   }, []);
@@ -34,16 +30,14 @@ const loadData = async () => {
     setLoading(true);
     setError(null);
     
-try {
-      const [dealsData, stagesData, contactsData] = await Promise.all([
+    try {
+      const [dealsData, stagesData] = await Promise.all([
         getAllDeals(),
-        getAllStages(),
-        getAllContacts()
+        getAllStages()
       ]);
       
       setDeals(dealsData);
       setStages(stagesData);
-      setContacts(contactsData);
     } catch (err) {
       console.error("Error loading pipeline data:", err);
       setError("Failed to load pipeline data");
@@ -168,19 +162,6 @@ const handleEditDeal = (deal) => {
   if (loading) return <Loading />;
   if (error) return <ErrorView message={error} onRetry={loadData} />;
 
-// Render list view if selected
-  if (viewMode === 'list') {
-    return (
-      <DealList 
-        dealsData={deals}
-        contactsData={contacts}
-        stagesData={stages}
-        onRefresh={loadData}
-        onViewModeChange={setViewMode}
-      />
-    );
-  }
-
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -197,31 +178,6 @@ const handleEditDeal = (deal) => {
           </div>
           
           <div className="flex items-center gap-4">
-            {/* View Toggle */}
-            <div className="flex items-center bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('pipeline')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  viewMode === 'pipeline'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <ApperIcon name="BarChart3" size={16} className="mr-2" />
-                Pipeline
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  viewMode === 'list'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <ApperIcon name="List" size={16} className="mr-2" />
-                List
-              </button>
-            </div>
             <div className="text-right">
               <div className="text-sm text-gray-500">Total Pipeline Value</div>
               <div className="text-2xl font-bold text-green-600">
@@ -279,7 +235,7 @@ const handleEditDeal = (deal) => {
 
 
 {/* Create Deal Modal */}
-<Modal
+      <Modal
         isOpen={isCreatingDeal && !selectedDeal}
         onClose={cancelCreateDeal}
         title="Create New Deal"
@@ -287,13 +243,11 @@ const handleEditDeal = (deal) => {
         <DealForm
           onSubmit={handleCreateDeal}
           onCancel={cancelCreateDeal}
-          contacts={contacts}
-          stages={stages}
           loading={isCreatingDeal}
         />
       </Modal>
 
-{/* Edit Deal Modal */}
+      {/* Edit Deal Modal */}
       <Modal
         isOpen={isEditingDeal}
         onClose={cancelEditDeal}
@@ -303,8 +257,6 @@ const handleEditDeal = (deal) => {
           initialData={selectedDeal}
           onSubmit={handleUpdateDeal}
           onCancel={cancelEditDeal}
-          contacts={contacts}
-          stages={stages}
           loading={isCreatingDeal}
         />
       </Modal>

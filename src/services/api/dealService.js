@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 export const getAllDeals = async () => {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.fetchRecords('deal_c', {
+const response = await apperClient.fetchRecords('deal_c', {
       fields: [
         {"field": {"Name": "Name"}},
         {"field": {"Name": "value_c"}},
         {"field": {"Name": "contact_c"}, "referenceField": {"field": {"Name": "name_c"}}},
-        {"field": {"Name": "deal_stage_c"}, "referenceField": {"field": {"Name": "Name"}}},
+        {"field": {"Name": "deal_stage_c"}},
         {"field": {"Name": "progress_c"}},
         {"field": {"Name": "CreatedOn"}},
         {"field": {"Name": "ModifiedOn"}}
@@ -34,12 +34,12 @@ export const getAllDeals = async () => {
 export const getDealById = async (dealId) => {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.getRecordById('deal_c', dealId, {
+const response = await apperClient.getRecordById('deal_c', dealId, {
       fields: [
         {"field": {"Name": "Name"}},
         {"field": {"Name": "value_c"}},
         {"field": {"Name": "contact_c"}, "referenceField": {"field": {"Name": "name_c"}}},
-        {"field": {"Name": "deal_stage_c"}, "referenceField": {"field": {"Name": "Name"}}},
+        {"field": {"Name": "deal_stage_c"}},
         {"field": {"Name": "progress_c"}},
         {"field": {"Name": "CreatedOn"}},
         {"field": {"Name": "ModifiedOn"}}
@@ -55,7 +55,7 @@ export const getDealById = async (dealId) => {
     return response.data;
   } catch (error) {
     console.error(`Error fetching deal ${dealId}:`, error?.response?.data?.message || error);
-    toast.error("Failed to load deal");
+    toast.error("Failed to load deal details");
     return null;
   }
 };
@@ -64,25 +64,18 @@ export const createDeal = async (dealData) => {
   try {
     const apperClient = getApperClient();
     
-    // Prepare data with only updateable fields and proper formats
-    const preparedData = {
-      Name: dealData.Name,
-      value_c: dealData.value_c ? parseInt(dealData.value_c) : 0,
-      contact_c: dealData.contact_c ? parseInt(dealData.contact_c) : null,
-      deal_stage_c: dealData.deal_stage_c ? parseInt(dealData.deal_stage_c) : null,
-      progress_c: dealData.progress_c ? parseInt(dealData.progress_c) : 0
+    // Only include Updateable fields
+    const payload = {
+      records: [{
+        Name: dealData.Name,
+        value_c: dealData.value_c ? Number(dealData.value_c) : 0,
+        contact_c: dealData.contact_c ? parseInt(dealData.contact_c) : null,
+        deal_stage_c: dealData.deal_stage_c ? parseInt(dealData.deal_stage_c) : null,
+        progress_c: dealData.progress_c ? Number(dealData.progress_c) : 0
+      }]
     };
 
-    // Remove null values
-    Object.keys(preparedData).forEach(key => {
-      if (preparedData[key] === null || preparedData[key] === undefined) {
-        delete preparedData[key];
-      }
-    });
-
-    const response = await apperClient.createRecord('deal_c', {
-      records: [preparedData]
-    });
+    const response = await apperClient.createRecord('deal_c', payload);
 
     if (!response.success) {
       console.error(response.message);
@@ -93,7 +86,7 @@ export const createDeal = async (dealData) => {
     if (response.results) {
       const successful = response.results.filter(r => r.success);
       const failed = response.results.filter(r => !r.success);
-      
+
       if (failed.length > 0) {
         console.error(`Failed to create ${failed.length} deals:`, failed);
         failed.forEach(record => {
@@ -101,41 +94,38 @@ export const createDeal = async (dealData) => {
           if (record.message) toast.error(record.message);
         });
       }
-      
-      return successful.length > 0 ? successful[0].data : null;
+
+      if (successful.length > 0) {
+        toast.success("Deal created successfully");
+        return successful[0].data;
+      }
     }
 
-    return response.data;
+    return null;
   } catch (error) {
     console.error("Error creating deal:", error?.response?.data?.message || error);
     toast.error("Failed to create deal");
     return null;
   }
 };
+
 export const updateDeal = async (dealId, dealData) => {
   try {
     const apperClient = getApperClient();
     
-    // Prepare data with only updateable fields and proper formats
-    const preparedData = {
-      Id: parseInt(dealId),
-      Name: dealData.Name,
-      value_c: dealData.value_c ? parseInt(dealData.value_c) : 0,
-      contact_c: dealData.contact_c ? parseInt(dealData.contact_c) : null,
-      deal_stage_c: dealData.deal_stage_c ? parseInt(dealData.deal_stage_c) : null,
-      progress_c: dealData.progress_c ? parseInt(dealData.progress_c) : 0
+    // Only include Updateable fields
+    const payload = {
+      records: [{
+        Id: dealId,
+        Name: dealData.Name,
+        value_c: dealData.value_c ? Number(dealData.value_c) : 0,
+        contact_c: dealData.contact_c ? parseInt(dealData.contact_c) : null,
+        deal_stage_c: dealData.deal_stage_c ? parseInt(dealData.deal_stage_c) : null,
+        progress_c: dealData.progress_c ? Number(dealData.progress_c) : 0
+      }]
     };
 
-    // Remove null values except Id
-    Object.keys(preparedData).forEach(key => {
-      if (key !== 'Id' && (preparedData[key] === null || preparedData[key] === undefined)) {
-        delete preparedData[key];
-      }
-    });
-
-    const response = await apperClient.updateRecord('deal_c', {
-      records: [preparedData]
-    });
+    const response = await apperClient.updateRecord('deal_c', payload);
 
     if (!response.success) {
       console.error(response.message);
@@ -146,7 +136,7 @@ export const updateDeal = async (dealId, dealData) => {
     if (response.results) {
       const successful = response.results.filter(r => r.success);
       const failed = response.results.filter(r => !r.success);
-      
+
       if (failed.length > 0) {
         console.error(`Failed to update ${failed.length} deals:`, failed);
         failed.forEach(record => {
@@ -154,24 +144,26 @@ export const updateDeal = async (dealId, dealData) => {
           if (record.message) toast.error(record.message);
         });
       }
-      
-      return successful.length > 0 ? successful[0].data : null;
+
+      if (successful.length > 0) {
+        toast.success("Deal updated successfully");
+        return successful[0].data;
+      }
     }
 
-    return response.data;
+    return null;
   } catch (error) {
     console.error("Error updating deal:", error?.response?.data?.message || error);
     toast.error("Failed to update deal");
     return null;
-}
+  }
 };
 
 export const deleteDeal = async (dealId) => {
   try {
     const apperClient = getApperClient();
-    
     const response = await apperClient.deleteRecord('deal_c', {
-      RecordIds: [parseInt(dealId)]
+      RecordIds: [dealId]
     });
 
     if (!response.success) {
@@ -183,17 +175,21 @@ export const deleteDeal = async (dealId) => {
     if (response.results) {
       const successful = response.results.filter(r => r.success);
       const failed = response.results.filter(r => !r.success);
-      
+
       if (failed.length > 0) {
         console.error(`Failed to delete ${failed.length} deals:`, failed);
         failed.forEach(record => {
           if (record.message) toast.error(record.message);
         });
       }
-      return successful.length > 0;
+
+      if (successful.length > 0) {
+        toast.success("Deal deleted successfully");
+        return true;
+      }
     }
 
-    return true;
+    return false;
   } catch (error) {
     console.error("Error deleting deal:", error?.response?.data?.message || error);
     toast.error("Failed to delete deal");

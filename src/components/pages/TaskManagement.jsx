@@ -1,185 +1,168 @@
-import React, { useCallback, useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import { toast } from "react-toastify";
-import { createTask, deleteTask, updateTask } from "@/services/api/taskService";
-import Modal from "@/components/atoms/Modal";
-import Layout from "@/components/organisms/Layout";
-import TaskList from "@/components/organisms/TaskList";
-import TaskForm from "@/components/molecules/TaskForm";
-import ConfirmDialog from "@/components/molecules/ConfirmDialog";
+import React, { useState, useCallback } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import Modal from '@/components/atoms/Modal';
+import TaskList from '@/components/organisms/TaskList';
+import ConfirmDialog from '@/components/molecules/ConfirmDialog';
+import TaskForm from '@/components/molecules/TaskForm';
+import { createTask, updateTask, deleteTask } from '@/services/api/taskService';
 
 function TaskManagement() {
   const { user } = useOutletContext() || {};
   const [selectedTask, setSelectedTask] = useState(null);
-  const [showTaskForm, setShowTaskForm] = useState(false);
-  const [editingTask, setEditingTask] = useState(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Task selection handler
-  const handleTaskSelect = useCallback((task) => {
+  const refreshTasks = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
+
+  function handleTaskSelect(task) {
     setSelectedTask(task);
-  }, []);
+  }
 
-  // Add new task handler
-  const handleAddTask = useCallback(() => {
-    setEditingTask(null);
-    setShowTaskForm(true);
-  }, []);
+  function handleAddTask() {
+    setIsCreateModalOpen(true);
+  }
 
-  // Edit task handler
-  const handleEditTask = useCallback((task) => {
-    setEditingTask(task);
-    setShowTaskForm(true);
-  }, []);
+  function handleEditTask(task) {
+    setTaskToEdit(task);
+    setIsEditModalOpen(true);
+  }
 
-  // Delete task handler
-  const handleDeleteTask = useCallback((task) => {
+  function handleDeleteTask(task) {
     setTaskToDelete(task);
-    setShowDeleteDialog(true);
-  }, []);
+    setIsDeleteDialogOpen(true);
+  }
 
-  // Form submission handler
-  const handleFormSubmit = useCallback(async (taskData) => {
+  function closeCreateModal() {
+    setIsCreateModalOpen(false);
+  }
+
+  function closeEditModal() {
+    setIsEditModalOpen(false);
+    setTaskToEdit(null);
+  }
+
+  function closeDeleteDialog() {
+    setIsDeleteDialogOpen(false);
+    setTaskToDelete(null);
+  }
+
+  async function handleCreateSubmit(taskData) {
     try {
-      setLoading(true);
+      setIsSubmitting(true);
+      const newTask = await createTask(taskData);
       
-      let result;
-      if (editingTask) {
-        // Update existing task
-        result = await updateTask(editingTask.Id, taskData);
-      } else {
-        // Create new task
-        result = await createTask(taskData);
-      }
-
-      if (result) {
-        // Refresh the task list
-        setRefreshTrigger(prev => prev + 1);
-        
-        // Close the form
-        setShowTaskForm(false);
-        setEditingTask(null);
-        
-        // Update selected task if it was being edited
-        if (editingTask && result.Id === editingTask.Id) {
-          setSelectedTask(result);
-        }
+      if (newTask) {
+        closeCreateModal();
+        refreshTasks();
+        setSelectedTask(newTask);
       }
     } catch (error) {
-      console.error('Error saving task:', error);
-      toast.error('Failed to save task');
+      console.error('Error creating task:', error);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
-  }, [editingTask]);
+  }
 
-  // Form cancel handler
-  const handleFormCancel = useCallback(() => {
-    setShowTaskForm(false);
-    setEditingTask(null);
-  }, []);
-
-  // Confirm delete handler
-  const confirmDelete = useCallback(async () => {
-    if (!taskToDelete) return;
-
+  async function handleEditSubmit(taskData) {
     try {
-      setLoading(true);
+      setIsSubmitting(true);
+      const updatedTask = await updateTask(taskToEdit.Id, taskData);
+      
+      if (updatedTask) {
+        closeEditModal();
+        refreshTasks();
+        setSelectedTask(updatedTask);
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function confirmDelete() {
+    try {
+      setIsSubmitting(true);
       const success = await deleteTask(taskToDelete.Id);
       
       if (success) {
-        // Refresh the task list
-        setRefreshTrigger(prev => prev + 1);
+        closeDeleteDialog();
+        refreshTasks();
         
         // Clear selection if deleted task was selected
         if (selectedTask?.Id === taskToDelete.Id) {
           setSelectedTask(null);
         }
-        
-        // Close dialog
-        setShowDeleteDialog(false);
-        setTaskToDelete(null);
       }
     } catch (error) {
       console.error('Error deleting task:', error);
-      toast.error('Failed to delete task');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
-  }, [taskToDelete, selectedTask]);
-
-  // Cancel delete handler
-  const cancelDelete = useCallback(() => {
-    setShowDeleteDialog(false);
-    setTaskToDelete(null);
-  }, []);
-
-  // Context value for Layout component
-  const layoutContext = {
-    selectedTask,
-    showTaskForm,
-    editingTask,
-    showDeleteDialog,
-    taskToDelete,
-    loading,
-    refreshTrigger,
-    handleTaskSelect,
-    handleAddTask,
-    handleEditTask,
-    handleDeleteTask,
-    handleFormSubmit,
-    handleFormCancel,
-    confirmDelete,
-    cancelDelete
-  };
+  }
 
   return (
-    <Layout context={layoutContext}>
-      <div className="h-full flex flex-col">
-        {/* Task List */}
-        <div className="flex-1 overflow-hidden">
-          <TaskList
-            selectedTask={selectedTask}
-            onTaskSelect={handleTaskSelect}
-            onAddTask={handleAddTask}
-            onEditTask={handleEditTask}
-            onDeleteTask={handleDeleteTask}
-            refreshTrigger={refreshTrigger}
-          />
-        </div>
+    <div className="h-full">
+      {/* Main Task List */}
+      <TaskList
+        selectedTask={selectedTask}
+        onTaskSelect={handleTaskSelect}
+        onAddTask={handleAddTask}
+        onEditTask={handleEditTask}
+        onDeleteTask={handleDeleteTask}
+        refreshTrigger={refreshTrigger}
+      />
 
-        {/* Task Form Modal */}
-        <Modal
-          isOpen={showTaskForm}
-          onClose={handleFormCancel}
-          title={editingTask ? 'Edit Task' : 'Create New Task'}
-          size="lg"
-        >
-          <TaskForm
-            initialData={editingTask}
-            onSubmit={handleFormSubmit}
-            onCancel={handleFormCancel}
-            isLoading={loading}
-          />
-        </Modal>
-
-        {/* Delete Confirmation Dialog */}
-        <ConfirmDialog
-          isOpen={showDeleteDialog}
-          onClose={cancelDelete}
-          onConfirm={confirmDelete}
-          title="Delete Task"
-          message={`Are you sure you want to delete "${taskToDelete?.Name || 'this task'}"? This action cannot be undone.`}
-          confirmLabel="Delete Task"
-          cancelLabel="Cancel"
-          variant="danger"
-          isLoading={loading}
+      {/* Create Task Modal */}
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={closeCreateModal}
+        title="Create New Task"
+        size="lg"
+      >
+        <TaskForm
+          onSubmit={handleCreateSubmit}
+          onCancel={closeCreateModal}
+          isLoading={isSubmitting}
         />
-      </div>
-    </Layout>
+      </Modal>
+
+      {/* Edit Task Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        title="Edit Task"
+        size="lg"
+      >
+        {taskToEdit && (
+          <TaskForm
+            initialData={taskToEdit}
+            onSubmit={handleEditSubmit}
+            onCancel={closeEditModal}
+            isLoading={isSubmitting}
+          />
+        )}
+      </Modal>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={closeDeleteDialog}
+        onConfirm={confirmDelete}
+        title="Delete Task"
+        message={`Are you sure you want to delete "${taskToDelete?.Name}"? This action cannot be undone.`}
+        confirmLabel="Delete Task"
+        confirmVariant="danger"
+        isLoading={isSubmitting}
+      />
+    </div>
   );
 }
 
