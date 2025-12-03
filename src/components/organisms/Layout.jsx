@@ -27,6 +27,7 @@ const location = useLocation()
 
 const navigation = [
     { name: 'Contacts', href: '/', icon: 'Users' },
+    { name: 'Leads', href: '/leads', icon: 'UserPlus' },
     { name: 'Tasks', href: '/tasks', icon: 'CheckSquare' },
     { name: 'Deals', href: '/deals', icon: 'TrendingUp' },
     { name: 'Companies', href: '/companies', icon: 'Building2' }
@@ -306,6 +307,14 @@ const outletContext = {
                 >
                   <ApperIcon name="Plus" size={18} />
                   <span>Add Deal</span>
+                </button>
+              ) : location.pathname === '/leads' ? (
+                <button
+                  onClick={() => {/* Lead add handled by LeadManagement */}}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  <ApperIcon name="Plus" size={18} />
+                  <span>Add Lead</span>
                 </button>
               ) : location.pathname === '/tasks' ? (
                 <button

@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name_c": "Sarah Johnson",
+    "email_c": "sarah.johnson@techcorp.com",
+    "phone_c": "+1-555-0123",
+    "company_c": "TechCorp Industries",
+    "position_c": "CTO",
+    "status_c": "qualified",
+    "source_c": "website",
+    "value_c": 50000,
+    "notes_c": "Interested in enterprise solution, budget approved for Q2",
+    "tags_c": "enterprise,technology,hot-lead",
+    "created_at_c": "2024-01-15T10:30:00Z",
+    "updated_at_c": "2024-01-20T14:45:00Z"
+  },
+  {
+    "id": 2,
+    "name_c": "Michael Chen",
+    "email_c": "m.chen@innovateplus.com",
+    "company_c": "InnovatePlus",
+    "phone_c": "+1-555-0234",
+    "position_c": "Head of Operations",
+    "status_c": "new",
+    "source_c": "referral",
+    "value_c": 25000,
+    "notes_c": "Referred by existing client, needs demo scheduling",
+    "tags_c": "referral,operations,warm-lead",
+    "created_at_c": "2024-01-18T09:15:00Z",
+    "updated_at_c": "2024-01-18T09:15:00Z"
+  },
+  {
+    "id": 3,
+    "name_c": "Emily Rodriguez",
+    "email_c": "emily.r@marketpro.net",
+    "company_c": "MarketPro Solutions",
+    "phone_c": "+1-555-0345",
+    "position_c": "Marketing Director",
+    "status_c": "contacted",
+    "source_c": "linkedin",
+    "value_c": 35000,
+    "notes_c": "Actively evaluating solutions, comparing with competitors",
+    "tags_c": "marketing,evaluation,competitive",
+    "created_at_c": "2024-01-20T16:20:00Z",
+    "updated_at_c": "2024-01-22T11:30:00Z"
+  },
+  {
+    "id": 4,
+    "name_c": "David Park",
+    "email_c": "d.park@globaltech.io",
+    "company_c": "GlobalTech Solutions",
+    "phone_c": "+1-555-0456",
+    "position_c": "VP of Technology",
+    "status_c": "qualified",
+    "source_c": "conference",
+    "value_c": 75000,
+    "notes_c": "Met at TechConnect conference, ready to move forward",
+    "tags_c": "conference,technology,high-value",
+    "created_at_c": "2024-01-12T14:20:00Z",
+    "updated_at_c": "2024-01-25T09:15:00Z"
+  }
+]
