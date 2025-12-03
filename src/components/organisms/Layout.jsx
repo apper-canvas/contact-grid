@@ -27,10 +27,11 @@ const [selectedContact, setSelectedContact] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
 
 const navigation = [
-{ name: 'Contacts', href: '/contacts', icon: 'Users' },
+    { name: 'Contacts', href: '/contacts', icon: 'Users' },
     { name: 'Leads', href: '/leads', icon: 'UserPlus' },
     { name: 'Tasks', href: '/tasks', icon: 'CheckSquare' },
     { name: 'Deals', href: '/deals', icon: 'TrendingUp' },
+    { name: 'Quotes', href: '/quotes', icon: 'FileText' },
     { name: 'Companies', href: '/companies', icon: 'Building2' }
   ]
   // App-level handlers
@@ -342,8 +343,16 @@ const outletContext = {
                   onClick={handleAddTask}
                   className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 >
-                  <ApperIcon name="Plus" size={18} />
+<ApperIcon name="Plus" size={18} />
                   <span>Add Task</span>
+                </button>
+              ) : location.pathname === '/quotes' ? (
+                <button
+                  onClick={handleAddContact}
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                >
+                  <ApperIcon name="Plus" size={18} />
+                  <span>Create Quote</span>
                 </button>
               ) : (
                 <button

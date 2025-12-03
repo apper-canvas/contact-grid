@@ -64,12 +64,25 @@
       "redirectOnDeny": "/login"
     }
 },
-  "/leads": {
+"/leads": {
     "allow": {
       "when": {
         "conditions": [
           {
             "label": "User must be authenticated to view leads",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/quotes": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be authenticated to view quotes",
             "rule": "authenticated"
           }
         ]
