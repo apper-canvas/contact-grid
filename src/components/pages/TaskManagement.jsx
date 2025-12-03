@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { ApperIcon } from '@/components/ApperIcon';
-import { Button } from '@/components/atoms/Button';
+import Button from '@/components/atoms/Button';
 import { SearchBar } from '@/components/molecules/SearchBar';
 import { SortFilter } from '@/components/molecules/SortFilter';
 import { TaskList } from '@/components/organisms/TaskList';
