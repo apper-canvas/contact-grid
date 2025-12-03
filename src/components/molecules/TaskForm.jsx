@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { companyService } from "@/services/api/companyService";
+import { getAllCompanies } from "@/services/api/companyService";
 import { getAllContacts } from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
 import Textarea from "@/components/atoms/Textarea";
@@ -42,11 +42,11 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
     }
   }, [task]);
 
-  const loadContactsAndCompanies = async () => {
+const loadContactsAndCompanies = async () => {
     try {
-const [contactData, companyData] = await Promise.all([
+      const [contactData, companyData] = await Promise.all([
         getAllContacts(),
-        companyService.getAll()
+        getAllCompanies()
       ]);
       setContacts(contactData || []);
       setCompanies(companyData || []);
