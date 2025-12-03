@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
+import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
 import { useAuth } from "@/layouts/Root";
+import ApperIcon from "@/components/ApperIcon";
 
 function Layout() {
 const location = useLocation()
@@ -67,7 +67,7 @@ const handleAddContact = () => {
     // The actual implementation is in the DealPipeline component
   };
 
-const handleAddTask = () => {
+  const handleAddTask = () => {
     // This will be handled by task management components
   };
 
@@ -81,22 +81,18 @@ const handleAddTask = () => {
     setShowDeleteDialog(true);
   };
 
-  const handleFormSubmit = async (contactData) => {
+  const handleFormSubmit = async (formData) => {
     setLoading(true);
     
     try {
-      let result;
-      if (editingContact) {
-        result = await updateContact(editingContact.id, contactData);
-        if (result.success && result.data) {
-          if (selectedContact?.id === editingContact.id) {
-            setSelectedContact(result.data);
-          }
+if (editingContact) {
+        const updatedContact = await updateContact(editingContact.id, formData);
+        if (updatedContact) {
+          setSelectedContact(updatedContact);
           toast.success("Contact updated successfully!");
         }
       } else {
-        result = await createContact(contactData);
-        const newContact = result?.data;
+        const newContact = await createContact(formData);
         if (newContact) {
           setSelectedContact(newContact);
           toast.success("Contact added successfully!");
