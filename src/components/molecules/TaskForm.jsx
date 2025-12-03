@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { companyService } from "@/services/api/companyService";
-import { contactService } from "@/services/api/contactService";
+import { getAllContacts } from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
 import Textarea from "@/components/atoms/Textarea";
 import Button from "@/components/atoms/Button";
@@ -44,8 +44,8 @@ const TaskForm = ({ task, onSubmit, onCancel }) => {
 
   const loadContactsAndCompanies = async () => {
     try {
-      const [contactData, companyData] = await Promise.all([
-        contactService.getAll(),
+const [contactData, companyData] = await Promise.all([
+        getAllContacts(),
         companyService.getAll()
       ]);
       setContacts(contactData || []);
