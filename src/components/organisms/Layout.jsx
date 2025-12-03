@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { cn } from "@/utils/cn";
 import { createContact, deleteContact, updateContact } from "@/services/api/contactService";
-import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
+import { cn } from "@/utils/cn";
+import { useAuth } from "@/layouts/Root";
 
 function Layout() {
 const location = useLocation()
@@ -14,7 +14,7 @@ const location = useLocation()
   
 // State declarations
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [selectedContact, setSelectedContact] = useState(null)
+const [selectedContact, setSelectedContact] = useState(null)
   const [showContactForm, setShowContactForm] = useState(false)
   const [editingContact, setEditingContact] = useState(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -24,9 +24,10 @@ const location = useLocation()
   const [bulkDeleteClearSelection, setBulkDeleteClearSelection] = useState(null)
   const [loading, setLoading] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [searchQuery, setSearchQuery] = useState("")
 
 const navigation = [
-    { name: 'Contacts', href: '/', icon: 'Users' },
+{ name: 'Contacts', href: '/contacts', icon: 'Users' },
     { name: 'Leads', href: '/leads', icon: 'UserPlus' },
     { name: 'Tasks', href: '/tasks', icon: 'CheckSquare' },
     { name: 'Deals', href: '/deals', icon: 'TrendingUp' },
@@ -41,7 +42,25 @@ const handleContactSelect = (contact) => {
     setSelectedContact(contact);
   };
 
-  // Handle bulk update (edit single selected contact)
+  // Handle adding new contact
+  const handleAddContact = () => {
+    setEditingContact(null);
+    setShowContactForm(true);
+  };
+
+  // Handle editing contact
+  const handleEditContact = (contact) => {
+    setEditingContact(contact);
+    setShowContactForm(true);
+  };
+
+  // Handle deleting contact
+  const handleDeleteContact = (contact) => {
+    setContactToDelete(contact);
+    setShowDeleteDialog(true);
+  };
+
+// Handle bulk update (edit single selected contact)
   const handleBulkUpdate = (contactIds, clearSelection) => {
     if (contactIds.length === 1) {
       // Find the contact to edit and open edit form
@@ -50,71 +69,92 @@ const handleContactSelect = (contact) => {
       // by calling the existing handleEditContact method
       clearSelection();
     }
-};
+  };
 
-  const handleBulkDelete = (contactIds, clearSelection) => {
+const handleBulkDelete = (contactIds, clearSelection) => {
     setContactsToDelete(contactIds);
-    setBulkDeleteClearSelection(clearSelection);
+    setBulkDeleteClearSelection(() => clearSelection);
     setShowBulkDeleteDialog(true);
   };
 
-const handleAddContact = () => {
-    setEditingContact(null);
-    setShowContactForm(true);
+  // Handle form submission
+  const handleFormSubmit = async (contactData) => {
+    setLoading(true);
+    try {
+      let result;
+      if (editingContact) {
+        // Update existing contact
+        result = await updateContact(editingContact.id, contactData);
+        if (result) {
+          toast.success('Contact updated successfully');
+          setRefreshTrigger(prev => prev + 1);
+          setShowContactForm(false);
+          setEditingContact(null);
+        } else {
+          toast.error('Failed to update contact');
+        }
+      } else {
+        // Create new contact
+        result = await createContact(contactData);
+        if (result) {
+          toast.success('Contact created successfully');
+          setRefreshTrigger(prev => prev + 1);
+          setShowContactForm(false);
+        } else {
+          toast.error('Failed to create contact');
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast.error('An error occurred while saving the contact');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAddDeal = () => {
-// This will be handled by the DealPipeline component through props
+  // Handle form cancel
+  const handleFormCancel = () => {
+    setShowContactForm(false);
+    setEditingContact(null);
+  };
+
+  // Confirm single delete
+  const confirmDelete = async () => {
+    if (!contactToDelete) return;
+    
+    setLoading(true);
+    try {
+      const result = await deleteContact(contactToDelete.id);
+      if (result.success) {
+        toast.success('Contact deleted successfully');
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        toast.error('Failed to delete contact');
+      }
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+      toast.error('An error occurred while deleting the contact');
+    } finally {
+      setLoading(false);
+      setShowDeleteDialog(false);
+      setContactToDelete(null);
+    }
+  };
+
+  // Cancel single delete
+  const cancelDelete = () => {
+    setShowDeleteDialog(false);
+    setContactToDelete(null);
+  };
+
+const handleAddDeal = () => {
+    // This will be handled by the DealPipeline component through props
     // The actual implementation is in the DealPipeline component
   };
 
   const handleAddTask = () => {
     // This will be handled by task management components
   };
-
-  const handleEditContact = (contact) => {
-    setEditingContact(contact);
-    setShowContactForm(true);
-  };
-
-  const handleDeleteContact = (contact) => {
-    setContactToDelete(contact);
-    setShowDeleteDialog(true);
-  };
-
-  const handleFormSubmit = async (formData) => {
-    setLoading(true);
-    
-    try {
-if (editingContact) {
-        const updatedContact = await updateContact(editingContact.id, formData);
-        if (updatedContact) {
-          setSelectedContact(updatedContact);
-          toast.success("Contact updated successfully!");
-        }
-      } else {
-        const newContact = await createContact(formData);
-        if (newContact) {
-          setSelectedContact(newContact);
-          toast.success("Contact added successfully!");
-        }
-      }
-      
-      setShowContactForm(false);
-      setEditingContact(null);
-      refreshContacts();
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFormCancel = () => {
-    setShowContactForm(false);
-    setEditingContact(null);
-  };
-
 // Confirm bulk delete
   const confirmBulkDelete = async () => {
     if (contactsToDelete.length === 0) return;
@@ -124,7 +164,7 @@ if (editingContact) {
       let successCount = 0;
       let errorCount = 0;
 
-// Process each contact deletion
+      // Process each contact deletion
       for (const contactId of contactsToDelete) {
         const result = await deleteContact(contactId);
         if (result.success) {
@@ -163,33 +203,10 @@ if (editingContact) {
     setBulkDeleteClearSelection(null);
   };
 
-const confirmDelete = async () => {
-    if (!contactToDelete) return;
-
-    setLoading(true);
-    
-    try {
-      const result = await deleteContact(contactToDelete.id);
-      
-      if (result.success) {
-        if (selectedContact?.id === contactToDelete.id) {
-          setSelectedContact(null);
-        }
-        toast.success("Contact deleted successfully!");
-      }
-      
-      setShowDeleteDialog(false);
-      setContactToDelete(null);
-      refreshContacts();
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const cancelDelete = () => {
-setShowDeleteDialog(false);
-    setContactToDelete(null);
+  // Handle search in header
+  const handleHeaderSearch = (value) => {
+    setSearchQuery(value);
+    // This will be passed down to ContactList component
   };
 
   // Outlet context to share with child routes
@@ -203,6 +220,7 @@ const outletContext = {
     contactsToDelete,
     loading,
     refreshTrigger,
+    searchQuery,
     handleContactSelect,
     handleAddContact,
     handleEditContact,
@@ -214,7 +232,8 @@ const outletContext = {
     confirmDelete,
     cancelDelete,
     confirmBulkDelete,
-    cancelBulkDelete
+    cancelBulkDelete,
+    handleHeaderSearch
   };
 
   return (
@@ -285,13 +304,15 @@ const outletContext = {
         <header className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200 px-4 lg:px-6 py-3 lg:py-4">
           <div className="flex items-center justify-between">
             {/* Search Bar - Hidden on mobile, shown on desktop */}
-            <div className="hidden md:flex flex-1 max-w-2xl">
+<div className="hidden md:flex flex-1 max-w-2xl">
               <div className="relative w-full">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <ApperIcon name="Search" size={20} className="text-gray-400" />
                 </div>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => handleHeaderSearch(e.target.value)}
                   placeholder="Search contacts by name, company, or tags..."
                   className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-colors bg-gray-50 hover:bg-white"
                 />

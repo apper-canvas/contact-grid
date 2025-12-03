@@ -55,11 +55,11 @@ const route = {
 
 // Main application routes
 const appRoutes = [
-  createRoute({
+createRoute({
     index: true,
     element: <ContactManagement />
   }),
-createRoute({
+  createRoute({
     path: "contacts",
     element: <ContactManagement />
   }),
