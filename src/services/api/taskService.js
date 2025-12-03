@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 export async function getAllTasks() {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.fetchRecords('tasks_c', {
+const response = await apperClient.fetchRecords('tasks_c', {
       fields: [
         {"field": {"Name": "Id"}},
         {"field": {"Name": "Name"}},
@@ -13,8 +13,8 @@ export async function getAllTasks() {
         {"field": {"Name": "due_date_c"}},
         {"field": {"Name": "deal_c"}},
         {"field": {"Name": "contact_c"}},
-        {"field": {"Name": "status_c"}},
-        {"field": {"Name": "priority_c"}},
+        {"field": {"Name": "status_c"}, "referenceField": {"field": {"Name": "name_c"}}},
+        {"field": {"Name": "priority_c"}, "referenceField": {"field": {"Name": "name_c"}}},
         {"field": {"Name": "CreatedOn"}},
         {"field": {"Name": "ModifiedOn"}}
       ],
@@ -40,7 +40,7 @@ export async function getAllTasks() {
 export async function getTaskById(taskId) {
   try {
     const apperClient = getApperClient();
-    const response = await apperClient.getRecordById('tasks_c', taskId, {
+const response = await apperClient.getRecordById('tasks_c', taskId, {
       fields: [
         {"field": {"Name": "Id"}},
         {"field": {"Name": "Name"}},
@@ -48,8 +48,8 @@ export async function getTaskById(taskId) {
         {"field": {"Name": "due_date_c"}},
         {"field": {"Name": "deal_c"}},
         {"field": {"Name": "contact_c"}},
-        {"field": {"Name": "status_c"}},
-        {"field": {"Name": "priority_c"}},
+        {"field": {"Name": "status_c"}, "referenceField": {"field": {"Name": "name_c"}}},
+        {"field": {"Name": "priority_c"}, "referenceField": {"field": {"Name": "name_c"}}},
         {"field": {"Name": "CreatedOn"}},
         {"field": {"Name": "ModifiedOn"}}
       ]
@@ -283,7 +283,7 @@ export async function searchTasks(searchTerm) {
     }
 
     const apperClient = getApperClient();
-    const response = await apperClient.fetchRecords('tasks_c', {
+const response = await apperClient.fetchRecords('tasks_c', {
       fields: [
         {"field": {"Name": "Id"}},
         {"field": {"Name": "Name"}},
@@ -291,8 +291,8 @@ export async function searchTasks(searchTerm) {
         {"field": {"Name": "due_date_c"}},
         {"field": {"Name": "deal_c"}},
         {"field": {"Name": "contact_c"}},
-        {"field": {"Name": "status_c"}},
-        {"field": {"Name": "priority_c"}},
+        {"field": {"Name": "status_c"}, "referenceField": {"field": {"Name": "name_c"}}},
+        {"field": {"Name": "priority_c"}, "referenceField": {"field": {"Name": "name_c"}}},
         {"field": {"Name": "CreatedOn"}},
         {"field": {"Name": "ModifiedOn"}}
       ],
